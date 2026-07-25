@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const mmaduSchema = new Schema({
+const ntinyeSchema = new Schema({
     fullname: {
         type: String,
         required: true
@@ -69,5 +69,5 @@ const mmaduSchema = new Schema({
     },
 }, { timestamps: true });
 
-const Mmadu = mongoose.model('Mmadu', mmaduSchema);
-module.exports = Mmadu;
+const Ntinye = mongoose.model('Ntinye', ntinyeSchema);
+module.exports = Ntinye;

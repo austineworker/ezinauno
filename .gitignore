@@ -12,6 +12,7 @@ yarn.lock
 # Other files
 localIndex.js
 localVercel.json
+dump.txt
 
 # Your existing AL/Dynamics 365 entries
 ### AL ###

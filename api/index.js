@@ -5,12 +5,10 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const Mmadu = require('../models/mmadu');
-// const Bizdata = require('../models/bizdata');
+const Ntinye = require('../models/ntinye');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-// const multer = require('multer');
-// const upload = multer({ dest: 'temp/' });
 const fs = require('fs');
 
 //express app
@@ -143,10 +141,20 @@ app.post('/api/login', async (req, res) => {
         };
         
         const access_token = jwt.sign(MmaduData, process.env.ACCESS_TOKEN_SECRET);
+        const msg = {
+            token: access_token,
+            user: {
+                who: "user",
+                username: user.username,
+                fullname: user.fullname,
+                email: email,
+                date: user.createdAt
+            }
+        }
         
         await mongoose.disconnect();
 
-        res.status(200).json(sendResponse("200", "Login Successful", access_token));
+        res.status(200).json(sendResponse("200", "Login Successful", msg));
 
     } catch (error) {
         console.error('Login error:', error);
