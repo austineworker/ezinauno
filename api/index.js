@@ -1,11 +1,11 @@
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/../.env' });
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const Mmadu = require('./models/mmadu');
-const Bizdata = require('./models/bizdata');
+const Mmadu = require('../models/mmadu');
+const Bizdata = require('../models/bizdata');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
