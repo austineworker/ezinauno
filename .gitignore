@@ -9,6 +9,10 @@ yarn.lock
 .env.local
 .env.*.local
 
+# Other files
+localIndex.js
+localVercel.json
+
 # Your existing AL/Dynamics 365 entries
 ### AL ###
 #Template for AL projects for Dynamics 365 Business Central
