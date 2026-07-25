@@ -1,44 +1,38 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-    firstname: {
+const mmaduSchema = new Schema({
+    fullname: {
         type: String,
         required: true
     },
-    lastname: {
+    username: {
         type: String,
-        required: true
-    },
-    nickname: {
-        type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
-        required: true
-    },
-    tel: {
-        type: String,
-        required: true
-    },
-    lastclass: {
-        type: String,
-        required: true
-    },
-    house: {
-        type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
     },
-    img: {
+    biz: {
         type: String,
         required: true
+    },
+    domainKey: {
+        type: String,
+        required: true
+    },
+    referrer: {
+        type: String,
+        required: false // Set to true if you want it required
     }
 }, { timestamps: true });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const Mmadu = mongoose.model('Mmadu', mmaduSchema);
+module.exports = Mmadu;
