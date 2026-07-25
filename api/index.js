@@ -112,15 +112,15 @@ app.post('/api/register', async (req, res) => {
 // Login route
 app.post('/api/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { userData, password } = req.body;
 
-        if (_.isEmpty(email) || _.isEmpty(password)) {
+        if (_.isEmpty(userData) || _.isEmpty(password)) {
             return res.status(400).json(sendResponse("400", "Check for empty input!", ""));
         }
 
         await mongoose.connect(process.env.MONGODB_URI);
 
-        const user = await Mmadu.findOne({ email: email });
+        const user = await Mmadu.findOne({ email: userData });
 
         if (!user) {
             await mongoose.disconnect();
@@ -147,7 +147,7 @@ app.post('/api/login', async (req, res) => {
                 who: "user",
                 username: user.username,
                 fullname: user.fullname,
-                email: email,
+                email: user.email,
                 date: user.createdAt
             }
         }
@@ -158,7 +158,7 @@ app.post('/api/login', async (req, res) => {
 
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json(sendResponse("500", "Error processing, try again", ""));
+        res.status(500).json(sendResponse("500", error, ""));
     }
 });
 
