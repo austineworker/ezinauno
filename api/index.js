@@ -9,8 +9,8 @@ const Mmadu = require('../models/mmadu');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const multer = require('multer');
-const upload = multer({ dest: 'temp/' });
+// const multer = require('multer');
+// const upload = multer({ dest: 'temp/' });
 const fs = require('fs');
 
 //express app
