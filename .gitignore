@@ -1,4 +1,15 @@
+# Node.js
 node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Your existing AL/Dynamics 365 entries
 ### AL ###
 #Template for AL projects for Dynamics 365 Business Central
 #launch.json folder
@@ -22,3 +33,14 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+.env
+
+# Additional Node.js ignores
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+coverage/
+dist/
+build/
+*.tmp
