@@ -2,70 +2,62 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ntinyeSchema = new Schema({
-    fullname: {
+    plan: {
+        type: String,
+        required: true
+    },
+    egoOne: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    currentEgoOne: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    uzoUgwo: {
+        type: String,
+        required: true
+    },
+    dProf: {
         type: String,
         required: true
     },
     username: {
         type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
         required: true
     },
     biz: {
         type: String,
-        required: true
-    },
-    domainKey: {
-        type: String,
-        required: true
+        enum: ['b', 'i', 'a'],
+        default: 'b'
     },
     referrer: {
         type: String,
         required: false // Set to true if you want it required
     },
-    mmaduStatus: {
+    ugwoStat: {
         type: String,
-        enum: ['active', 'suspended'],
-        default: 'active'
+        enum: ['pend', 'appr', 'cancel'],
+        default: 'pend'
     },
-    bAd: {
+    nweputa: {
+        type: String,
+        required: false
+    },
+    matu: {
+        type: String,
+        required: false
+    },
+    domainKey: {
+        type: String,
+        required: true
+    },
+    refBon: {
         type: String,
         required: false,
-        default: '-'
-    },
-    eAd: {
-        type: String,
-        required: false,
-        default: '-'
-    },
-    bnsAd: {
-        type: String,
-        required: false,
-        default: '-'
-    },
-    bnAd: {
-        type: String,
-        required: false,
-        default: '-'
-    },
-    utAd: {
-        type: String,
-        required: false,
-        default: '-'
-    },
-    ueAd: {
-        type: String,
-        required: false,
-        default: '-'
+        default: 0
     },
 }, { timestamps: true });
 

@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const Mmadu = require('../models/mmadu');
+const Ntinyeprof = require('../models/ntinyeprof');
 const Ntinye = require('../models/ntinye');
+const Alo = require('../models/alo');
+const Reftab = require('../models/reftab');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -17,7 +20,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-const allowedOrigins = ['https://glassdoorholding.org', 'http://localhost:5173', 'https://n08.vercel.app', 'https://fgcn08.com'];
+const allowedOrigins = ['https://iruezinauno.vercel.app','https://glassdoorholding.org', 'http://localhost:5173', 'https://n08.vercel.app', 'https://fgcn08.com'];
 app.use(cors({
     origin: (origin, callback) => {
         if (allowedOrigins.includes(origin) || !origin) {
@@ -142,7 +145,7 @@ app.post('/api/login', async (req, res) => {
         
         const access_token = jwt.sign(MmaduData, process.env.ACCESS_TOKEN_SECRET);
         const msg = {
-            token: access_token,
+            access_token,
             user: {
                 who: "user",
                 username: user.username,
@@ -157,8 +160,177 @@ app.post('/api/login', async (req, res) => {
         res.status(200).json(sendResponse("200", "Login Successful", msg));
 
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json(sendResponse("500", error, ""));
+        // console.error('Login error:', error);
+        res.status(500).json(sendResponse("500", "Error processing, try again", ""));
+    }
+});
+
+// Ntinye route
+app.post('/api/ntinye', async (req, res) => {
+    try {
+        let { plan, egoOne, uzoUgwo, username, biz, domainKey, referrer } = req.body;
+        
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        const planData = await Alo.findOne({
+            plan: plan,
+            domainKey: domainKey
+        });
+
+        // If you need to check if data exists
+        if (!planData) {
+            // Plan not found
+           return res.status(400).json(sendResponse("400", "Plan not found!", ""));
+        }
+
+        let minAlo = planData.minAlo;
+        let maxAlo = planData.maxAlo;
+        let matu = planData.matu;
+        let dProf = planData.dProf;
+
+        // Create current date and add maturity hours
+        const currentDate = new Date();
+        currentDate.setHours(currentDate.getHours() + maturity);
+
+        // Format as Y-m-d H:i:s
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+        const matDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+        if (amount < minAlo) {
+            return res.status(400).json(sendResponse("400", "Value too low", ""));
+        }
+        else if (amount > maxAlo) {
+            return res.status(400).json(sendResponse("400", "Value too hight!", ""));
+        }
+        
+        const planExist = await Ntinye.findOne({
+            username: username,
+            plan: plan,
+            uzoUgwo: uzoUgwo,
+            biz: biz
+        });
+
+        // If you need to check if plan exists or not
+        if (!planExist) {
+            // Plan not found
+            //check whether referrer is empty
+            if (referrer.length == "") {
+                //just tinye, because the referrer didn't tinye yet
+                //now we run ntinye
+                const ntinyeData = {
+                    plan,
+                    egoOne,
+                    uzoUgwo,
+                    dProf,
+                    username,
+                    biz,
+                    referrer,
+                    matu,
+                    domainKey                    
+                };
+
+                let prof = 0;
+                const ntinyeDprof = {
+                    plan,
+                    prof,
+                    username
+                }
+
+                const Etinyego = new Ntinye(ntinyeData);
+                const Etinyegoprof = new Ntinyeprof(ntinyeDprof);
+                await Etinyego.save();
+                await Etinyegoprof.save();
+
+                return res.status(200).json(sendResponse("200", "Etinyego", ""));
+            }
+            else {
+                //check whether referrer actually exists
+                const referrerData = await Mmadu.findOne({
+                    username, biz
+                })
+                
+                const referrerEmail = referrerData.email;
+                if (!referrerData) {
+                    return res.status(400).json(sendResponse("400", "Wrong referral link for your biz", ""));
+                }
+                else {
+                    //check whether referrer etinyego before
+                    const ntinyeRefer = await Ntinye.findOne({
+                        username
+                    });
+
+                    if (!ntinyeRefer) {
+                        //no ntinye done yet
+                        const ntinyeBon = planData.refBon
+
+                        const bon = ((ntinyeBon/100) * egoOne);
+
+                        const ntinyeReftab = {
+                            username,
+                            biz,
+                            domainKey,
+                            bon
+                        }
+
+                        const Etniyegoref = new Reftab(ntinyeReftab);
+                        await Etniyegoref.save();
+
+
+                        //now we run ntinye
+                        const ntinyeData = {
+                            plan,
+                            egoOne,
+                            uzoUgwo,
+                            dProf,
+                            username,
+                            biz,
+                            referrer,
+                            matu,
+                            domainKey                    
+                        };
+                        const Etinyego = new Ntinye(ntinyeData);
+                        const ntinyeSucces = await Etinyego.save();
+
+                        if (ntinyeSuccess) {
+                            //wepu referrer
+                            const newRef = "-";
+                            const removeRef = await Mmadu.updateOne(
+                                { 
+                                    username: username, 
+                                    biz: biz 
+                                },
+                                { 
+                                    $set: { referrer: newRef } 
+                                }
+                            );
+
+                            return res.status(200).json(sendResponse("200", "Etinyego", ""));
+                        }
+                        else {
+                            return res.status(400).json(sendResponse("400", "Ntiny error", ""));
+                        }
+                    }
+                }
+            }
+        }
+
+        const People = new Mmadu(Mmadu_data);
+        await People.save();
+
+        await mongoose.disconnect();
+
+        res.status(200).json(sendResponse("200", "Signup Successful!"));
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json(sendResponse("500", "Error processing, try again"));
     }
 });
 
