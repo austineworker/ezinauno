@@ -296,7 +296,7 @@ app.post('/api/ntinye', async (req, res) => {
                             domainKey                    
                         };
                         const Etinyego = new Ntinye(ntinyeData);
-                        const ntinyeSucces = await Etinyego.save();
+                        const ntinyeSuccess = await Etinyego.save();
 
                         await mongoose.disconnect();
 
