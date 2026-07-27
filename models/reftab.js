@@ -17,7 +17,8 @@ const reftabSchema = new Schema({
     },
     bP: {
         type: String,
-        required: true
+        required: false,
+        default: 0
     },
 }, { timestamps: true });
 
