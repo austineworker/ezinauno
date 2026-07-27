@@ -7,12 +7,12 @@ const ntinyeSchema = new Schema({
         required: true
     },
     egoOne: {
-        type: String,
+        type: Number,
         required: true,
         default: 0
     },
     currentEgoOne: {
-        type: String,
+        type: Number,
         required: true,
         default: 0
     },
@@ -55,7 +55,7 @@ const ntinyeSchema = new Schema({
         required: true
     },
     refBon: {
-        type: String,
+        type: Number,
         required: false,
         default: 0
     },
