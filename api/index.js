@@ -311,10 +311,10 @@ app.post('/api/ntinye', async (req, res) => {
                                 }
                             );
 
-                            return res.status(200).json(sendResponse("200", "Etinyego", ""));
+                            return res.status(200).json(sendResponse("200", "Etinyego Done", ""));
                         }
                         else {
-                            return res.status(400).json(sendResponse("400", "Ntiny error", ""));
+                            return res.status(400).json(sendResponse("400", "Ntinye error", ""));
                         }
 
                         await mongoose.disconnect();
@@ -364,7 +364,7 @@ app.post('/api/ntinye', async (req, res) => {
             );
 
             if (updateNtinye) {
-                res.status(200).json(sendResponse("200", "Etinyego"));
+                res.status(200).json(sendResponse("200", "Etinyego Update"));
             }
             else {
                 res.status(400).json(sendResponse("400", "No ntinye"));
