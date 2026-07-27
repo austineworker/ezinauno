@@ -9,6 +9,7 @@ const Ntinyeprof = require('../models/ntinyeprof');
 const Ntinye = require('../models/ntinye');
 const Alo = require('../models/alo');
 const Reftab = require('../models/reftab');
+const Nweputa = require('../models/nweputa');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -232,7 +233,7 @@ app.post('/api/ntinye', async (req, res) => {
                     username,
                     biz,
                     referrer,
-                    matu,
+                    matu: matDate,
                     domainKey                    
                 };
 
@@ -453,6 +454,34 @@ app.post('/api/nwetaplan', async(req, res) => {
         await mongoose.disconnect();
 
         res.status(200).json(sendResponse("200", aloData));           
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));   
+    }
+});
+
+// nweta nweputa
+app.post('/api/meenweputa', async(req, res) => {
+    try {
+        const { username, egoOne, akpaAdd, plan, uzoUgwo, biz, domainKey } = req.body;
+        let nweputaStat = "pending";
+
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        const ntinyeData = await Ntinye.findOne({ 
+            username: username,
+            plan: plan,
+            uzoUgwo: uzoUgwo,
+            biz: biz
+        });
+
+        if (ntinyeData) {
+            let matu =  ntinyeData.matu;
+        }
+
+        await mongoose.disconnect();
+
+        res.status(200).json(sendResponse("200", nweputaData));           
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
     }

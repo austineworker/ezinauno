@@ -1,34 +1,36 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const aloSchema = new Schema({
+const nweputaSchema = new Schema({
+    username: {
+        type: String,
+        required: true
+    },
+    biz: {
+        type: String,
+        enum: ['b', 'i', 'a'],
+        default: 'b'
+    },
+    egoOne: {
+        type: String,
+        required: true,
+    },
     plan: {
         type: String,
         required: true
     },
-    afaPlan: {
-        type: String,
-        required: true,
-    },
-    maxAlo: {
-        type: String,
-        required: true,
-    },
-    minAlo: {
+    uzoUgwo: {
         type: String,
         required: true
     },
-    dProf: {
+    akpaAdd: {
         type: String,
         required: true
     },
-    refB: {
+    nwepuStat: {
         type: String,
-        required: true
-    },
-    matu: {
-        type: String,
-        required: true
+        enum: ['pen', 'app', 'can'],
+        default: 'pen'
     },
     domainKey: {
         type: String,
@@ -36,5 +38,5 @@ const aloSchema = new Schema({
     },
 }, { timestamps: true });
 
-const Alo = mongoose.model('Alo', aloSchema);
-module.exports = Alo;
+const Nweputa = mongoose.model('Nweputa', nweputaSchema);
+module.exports = Nweputa;
