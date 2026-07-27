@@ -450,7 +450,7 @@ app.post('/api/nwetaplan', async(req, res) => {
 
         return planData;
     } catch(error) {
-        res.status(400).json(sendResponse("400", "Error processing"));   
+        res.status(400).json(sendResponse("400", "Error processing: "+error));   
     }
 });
 
