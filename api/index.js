@@ -203,10 +203,10 @@ app.post('/api/ntinye', async (req, res) => {
 
         const matDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-        if (amount < minAlo) {
+        if (egoOne < minAlo) {
             return res.status(400).json(sendResponse("400", "Value too low", ""));
         }
-        else if (amount > maxAlo) {
+        else if (egoOne > maxAlo) {
             return res.status(400).json(sendResponse("400", "Value too hight!", ""));
         }
         
