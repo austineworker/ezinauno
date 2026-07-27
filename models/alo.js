@@ -11,11 +11,11 @@ const aloSchema = new Schema({
         required: true,
     },
     maxAlo: {
-        type: String,
+        type: Number,
         required: true,
     },
     minAlo: {
-        type: String,
+        type: Number,
         required: true
     },
     dProf: {

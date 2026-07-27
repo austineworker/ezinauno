@@ -207,7 +207,7 @@ app.post('/api/ntinye', async (req, res) => {
             return res.status(400).json(sendResponse("400", "Value too low", ""));
         }
         else if (egoOne > maxAlo) {
-            return res.status(400).json(sendResponse("400", "Value too hight!", ""));
+            return res.status(400).json(sendResponse("400", "Value too high!", ""));
         }
         
         const planExist = await Ntinye.findOne({
