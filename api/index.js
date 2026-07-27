@@ -191,7 +191,7 @@ app.post('/api/ntinye', async (req, res) => {
 
         // Create current date and add maturity hours
         const currentDate = new Date();
-        currentDate.setHours(currentDate.getHours() + maturity);
+        currentDate.setHours(currentDate.getHours() + matu);
 
         // Format as Y-m-d H:i:s
         const year = currentDate.getFullYear();
@@ -298,6 +298,8 @@ app.post('/api/ntinye', async (req, res) => {
                         const Etinyego = new Ntinye(ntinyeData);
                         const ntinyeSucces = await Etinyego.save();
 
+                        await mongoose.disconnect();
+
                         if (ntinyeSuccess) {
                             //wepu referrer
                             const newRef = "-";
@@ -320,17 +322,116 @@ app.post('/api/ntinye', async (req, res) => {
                 }
             }
         }
+        else {
+            const egoMbu = planExist.egoOne;
+            const currentEgoMbu = planExist.currentEgoOne;
+            oldMatu = planExist.matu;
 
-        const People = new Mmadu(Mmadu_data);
-        await People.save();
+            //now let's add time to the old matu
+            let newEgoOne = egoMbu + egoOne;
+            let currentEgoOne = currentEgoMbu + egoOne;
+            
+            // Parse the old matu date
+            const oldMatuDate = new Date(oldMatu);
 
-        await mongoose.disconnect();
+            // Add the new maturity hours
+            oldMatuDate.setHours(oldMatuDate.getHours() + matu);
 
-        res.status(200).json(sendResponse("200", "Signup Successful!"));
+            // Format the new maturity date
+            const year = oldMatuDate.getFullYear();
+            const month = String(oldMatuDate.getMonth() + 1).padStart(2, '0');
+            const day = String(oldMatuDate.getDate()).padStart(2, '0');
+            const hours = String(oldMatuDate.getHours()).padStart(2, '0');
+            const minutes = String(oldMatuDate.getMinutes()).padStart(2, '0');
+            const seconds = String(oldMatuDate.getSeconds()).padStart(2, '0');
 
+            const newMatu = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            //we update ntinye
+            const updateNtinye = await Ntinye.updateMany(
+                { 
+                    username: username, 
+                    plan: plan,
+                    biz: biz 
+                },
+                { 
+                    $set: { 
+                            egoOne: newEgoOne,
+                            currentEgoOne: currentEgoOne,
+                            matu: newMatu
+                         } 
+                }
+            );
+
+            await mongoose.disconnect();
+
+            if (updateNtinye) {
+                res.status(200).json(sendResponse("200", "Etinyego"));
+            }
+            else {
+                res.status(400).json(sendResponse("400", "No ntinye"));
+            }
+        }
     } catch (error) {
-        console.error('Registration error:', error);
+        // console.error('Registration error:', error);
         res.status(500).json(sendResponse("500", "Error processing, try again"));
+    }
+});
+
+//meputa plan 
+app.post('/api/meputaplan', async(req, res) => {
+    try {
+        let { plan, planName, maxVal, minVal, dP, refB, matu, domainKey } = req.body;
+
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        //let's check whether plan already exist such as A or B or C, if yes, we update else we insert
+        const planExist = await Alo.findOne({
+            plan: plan,
+            domainKey: domainKey
+        });
+
+        if (!planExist) {
+            //insert
+            const ntinyePlan = {
+               plan: plan,
+               afaPlan: planName,
+               maxAlo: maxVal,
+               minAlo: minVal,
+               dProf: dP,
+               refB: refB,
+               matu: matu,
+               domainKey: domainKey 
+            }
+
+            const tinyePlan = new Alo(ntinyePlan);
+            await tinyePlan.save();
+
+            res.status(200).json(sendResponse("200", "Etinyego plan"));
+        }
+        else {
+            //update
+            const ntinyePlan = await Alo.updateMany(
+                { 
+                    plan: plan
+                },
+                { 
+                    $set: { 
+                            afaPlan: planName,
+                            maxAlo: maxVal,
+                            minAlo: minVal,
+                            dProf: dP,
+                            refB: refB,
+                            matu: matu
+                         } 
+                }    
+            )
+
+            res.status(200).json(sendResponse("200", "Emego plan Update"));
+        }
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing"));
     }
 });
 
