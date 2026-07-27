@@ -408,6 +408,8 @@ app.post('/api/meputaplan', async(req, res) => {
             const tinyePlan = new Alo(ntinyePlan);
             await tinyePlan.save();
 
+            await mongoose.disconnect();
+
             res.status(200).json(sendResponse("200", "Etinyego plan"));
         }
         else {
@@ -427,6 +429,8 @@ app.post('/api/meputaplan', async(req, res) => {
                          } 
                 }    
             )
+
+            await mongoose.disconnect();
 
             res.status(200).json(sendResponse("200", "Emego plan Update"));
         }
