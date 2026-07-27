@@ -439,6 +439,21 @@ app.post('/api/meputaplan', async(req, res) => {
     }
 });
 
+// nweta plan
+app.post('/api/nwetaplan', async(req, res) => {
+    try {
+        const { domainKey } = req.body;
+
+        const planData = await Alo.find({ 
+            domainKey: domainKey 
+        }).lean();
+
+        return planData;
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing"));   
+    }
+});
+
 // Verify route
 app.get('/api/verify', async (req, res) => {
     const authHeader = req.headers['authorization'];
