@@ -328,8 +328,8 @@ app.post('/api/ntinye', async (req, res) => {
             oldMatu = planExist.matu;
 
             //now let's add time to the old matu
-            let newEgoOne = egoMbu + Number(egoOne);
-            let currentEgoOne = currentEgoMbu + Number(egoOne);
+            const newEgoOne = egoMbu + Number(egoOne);
+            const currentEgoOne = currentEgoMbu + Number(egoOne);
             
             // Parse the old matu date
             const oldMatuDate = new Date(oldMatu);
