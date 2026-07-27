@@ -127,15 +127,15 @@ app.post('/api/login', async (req, res) => {
         const user = await Mmadu.findOne({ email: userData });
 
         if (!user) {
-            await mongoose.disconnect();
             return res.status(401).json(sendResponse("401", "Invalid email or password!", ""));
+            await mongoose.disconnect();
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         
         if (!isMatch) {
-            await mongoose.disconnect();
             return res.status(401).json(sendResponse("401", "Invalid email or password!", ""));
+            await mongoose.disconnect();
         }
 
         const MmaduData = { 
@@ -155,10 +155,9 @@ app.post('/api/login', async (req, res) => {
                 date: user.createdAt
             }
         }
-        
-        await mongoose.disconnect();
 
         res.status(200).json(sendResponse("200", "Login Successful", msg));
+        await mongoose.disconnect();
 
     } catch (error) {
         // console.error('Login error:', error);
@@ -299,8 +298,6 @@ app.post('/api/ntinye', async (req, res) => {
                         const Etinyego = new Ntinye(ntinyeData);
                         const ntinyeSuccess = await Etinyego.save();
 
-                        await mongoose.disconnect();
-
                         if (ntinyeSuccess) {
                             //wepu referrer
                             const newRef = "-";
@@ -319,18 +316,20 @@ app.post('/api/ntinye', async (req, res) => {
                         else {
                             return res.status(400).json(sendResponse("400", "Ntiny error", ""));
                         }
+
+                        await mongoose.disconnect();
                     }
                 }
             }
         }
         else {
-            const egoMbu = planExist.egoOne;
-            const currentEgoMbu = planExist.currentEgoOne;
+            const egoMbu = Number(planExist.egoOne);
+            const currentEgoMbu = Number(planExist.currentEgoOne);
             oldMatu = planExist.matu;
 
             //now let's add time to the old matu
-            let newEgoOne = egoMbu + egoOne;
-            let currentEgoOne = currentEgoMbu + egoOne;
+            let newEgoOne = egoMbu + Number(egoOne);
+            let currentEgoOne = currentEgoMbu + Number(egoOne);
             
             // Parse the old matu date
             const oldMatuDate = new Date(oldMatu);
@@ -364,14 +363,14 @@ app.post('/api/ntinye', async (req, res) => {
                 }
             );
 
-            await mongoose.disconnect();
-
             if (updateNtinye) {
                 res.status(200).json(sendResponse("200", "Etinyego"));
             }
             else {
                 res.status(400).json(sendResponse("400", "No ntinye"));
             }
+
+            await mongoose.disconnect();
         }
     } catch (error) {
         // console.error('Registration error:', error);
@@ -409,9 +408,8 @@ app.post('/api/meputaplan', async(req, res) => {
             const tinyePlan = new Alo(ntinyePlan);
             await tinyePlan.save();
 
-            await mongoose.disconnect();
-
             res.status(200).json(sendResponse("200", "Etinyego plan"));
+            await mongoose.disconnect();
         }
         else {
             //update
@@ -431,9 +429,8 @@ app.post('/api/meputaplan', async(req, res) => {
                 }    
             )
 
-            await mongoose.disconnect();
-
             res.status(200).json(sendResponse("200", "Emego plan Update"));
+            await mongoose.disconnect();
         }
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing"));
@@ -451,9 +448,9 @@ app.post('/api/nwetaplan', async(req, res) => {
             domainKey: domainKey 
         }).lean();
 
-        await mongoose.disconnect();
-
         res.status(200).json(sendResponse("200", aloData));           
+
+        await mongoose.disconnect();
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
     }
@@ -479,9 +476,8 @@ app.post('/api/meenweputa', async(req, res) => {
             let matu =  ntinyeData.matu;
         }
 
-        await mongoose.disconnect();
-
         res.status(200).json(sendResponse("200", nweputaData));           
+        await mongoose.disconnect();
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
     }
