@@ -293,7 +293,7 @@ app.post('/api/ntinye', async (req, res) => {
                             username,
                             biz,
                             referrer,
-                            matu,
+                            matu: matDate,
                             domainKey                    
                         };
                         const Etinyego = new Ntinye(ntinyeData);
