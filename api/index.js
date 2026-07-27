@@ -227,7 +227,7 @@ app.post('/api/ntinye', async (req, res) => {
                 const ntinyeData = {
                     plan,
                     egoOne,
-                    egoOne,
+                    currentEgoOne: egoOne,
                     uzoUgwo,
                     dProf,
                     username,
@@ -288,7 +288,7 @@ app.post('/api/ntinye', async (req, res) => {
                         const ntinyeData = {
                             plan,
                             egoOne,
-                            egoOne,
+                            currentEgoOne: egoOne,
                             uzoUgwo,
                             dProf,
                             username,
