@@ -446,13 +446,13 @@ app.post('/api/nwetaplan', async(req, res) => {
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
 
-        const planData = await Alo.find({ 
+        const aloData = await Alo.find({ 
             domainKey: domainKey 
         }).lean();
 
         await mongoose.disconnect();
-        
-        return planData;
+
+        res.status(200).json(sendResponse("200", aloData));           
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
     }
