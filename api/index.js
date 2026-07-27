@@ -443,11 +443,15 @@ app.post('/api/meputaplan', async(req, res) => {
 app.post('/api/nwetaplan', async(req, res) => {
     try {
         const { domainKey } = req.body;
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
         const planData = await Alo.find({ 
             domainKey: domainKey 
         }).lean();
 
+        await mongoose.disconnect();
+        
         return planData;
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
