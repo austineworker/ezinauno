@@ -9,12 +9,12 @@ const ntinyeSchema = new Schema({
     egoOne: {
         type: String,
         required: true,
-        unique: true
+        default: 0
     },
     currentEgoOne: {
         type: String,
         required: true,
-        unique: true
+        default: 0
     },
     uzoUgwo: {
         type: String,
