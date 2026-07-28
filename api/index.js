@@ -776,7 +776,7 @@ app.post('/api/getrefstat', async(req, res) => {
 // get nwepustat
 app.post('/api/nwepustat', async(req, res) => {
     const { username, biz } = req.body;
-    const ugwoStat = "pend";
+    const ugwoStat = "pen";
 
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
