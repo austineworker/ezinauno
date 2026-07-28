@@ -19,15 +19,15 @@ const aloSchema = new Schema({
         required: true
     },
     dProf: {
-        type: String,
+        type: Number,
         required: true
     },
     refB: {
-        type: String,
+        type: Number,
         required: true
     },
     matu: {
-        type: String,
+        type: Number,
         required: true
     },
     domainKey: {

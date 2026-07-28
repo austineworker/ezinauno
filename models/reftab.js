@@ -16,7 +16,7 @@ const reftabSchema = new Schema({
         required: true
     },
     bP: {
-        type: String,
+        type: Number,
         required: false,
         default: 0
     },

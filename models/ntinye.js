@@ -21,7 +21,7 @@ const ntinyeSchema = new Schema({
         required: true
     },
     dProf: {
-        type: String,
+        type: Number,
         required: true
     },
     username: {
