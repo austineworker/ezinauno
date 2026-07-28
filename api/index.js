@@ -736,6 +736,40 @@ app.post('/api/updateaccount', async(req, res) => {
     await mongoose.disconnect();
 });
 
+// get refstat
+app.post('/api/getrefstat', async(req, res) => {
+    const { username, biz, domainKey } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    let empty = {
+        numRef: 0,
+        total: 0
+    };
+
+    const getRef = await Reftab.find({
+        username, biz, domainKey
+    });
+
+    if (getRef) {
+        const refData = [];
+        getRef.map((data) => {
+            let totalEgo = data.bP;
+            refData.push(totalEgo);
+        });
+        
+        let numRef = getRef?.length;
+        let allData = {
+            numRef: numRef,
+            total: refData.reduce((sum, current) => sum + current, 0)
+        };
+
+        res.status(200).json(sendResponse("200", allData));
+    }
+    await mongoose.disconnect();
+});
+
 // Verify route
 app.get('/api/verify', async (req, res) => {
     const authHeader = req.headers['authorization'];
