@@ -186,23 +186,17 @@ app.post('/api/ntinye', async (req, res) => {
 
         let minAlo = planData.minAlo;
         let maxAlo = planData.maxAlo;
-        let matu = planData.matu;
+        let daysToAdd = Number(planData.matu) || 0;
         let dProf = planData.dProf;
 
         // Create current date and add maturity hours
         const currentDate = new Date();
-        currentDate.setHours(currentDate.getHours() + matu);
+        currentDate.setDate(currentDate.getHours() + daysToAdd);
 
         // Format as Y-m-d H:i:s
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const hours = String(currentDate.getHours()).padStart(2, '0');
-        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-
-        const matDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
+        const pad = (num) => String(num).padStart(2, '0');
+        const matDate = `${currentDate.getFullYear()}-${pad(currentDate.getMonth() + 1)}-${pad(currentDate.getDate())} ${pad(currentDate.getHours())}:${pad(currentDate.getMinutes())}:${pad(currentDate.getSeconds())}`;
+        
         if (egoOne < minAlo) {
             return res.status(400).json(sendResponse("400", "Value too low", ""));
         }
@@ -249,7 +243,7 @@ app.post('/api/ntinye', async (req, res) => {
                 await Etinyego.save();
                 await Etinyegoprof.save();
 
-                return res.status(200).json(sendResponse("200", "Etinyego", ""));
+                return res.status(200).json(sendResponse("200", "Etinyego Done", ""));
             }
             else {
                 //check whether referrer actually exists
