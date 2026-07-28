@@ -494,7 +494,7 @@ app.post('/api/meenweputa', async(req, res) => {
 
                 //now we update ntinye table
                 //we update ntinye
-                const updateNtinye = await Ntinye.update(
+                const updateNtinye = await Ntinye.updateOne(
                     { 
                         username: username, 
                         plan: plan,
