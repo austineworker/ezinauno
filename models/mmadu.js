@@ -34,8 +34,8 @@ const mmaduSchema = new Schema({
     },
     mmaduStatus: {
         type: String,
-        enum: ['active', 'suspended'],
-        default: 'active'
+        enum: ['act', 'sus'],
+        default: 'act'
     },
     bAd: {
         type: String,

@@ -21,7 +21,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-const allowedOrigins = ['https://iruezinauno.vercel.app','https://glassdoorholding.org', 'http://localhost:5173', 'https://n08.vercel.app', 'https://fgcn08.com'];
+const allowedOrigins = ['https://iruezinauno.vercel.app','https://glassdoorholding.org', 'http://localhost:5173', 'http://localhost:5174', 'https://n08.vercel.app', 'https://fgcn08.com'];
 app.use(cors({
     origin: (origin, callback) => {
         if (allowedOrigins.includes(origin) || !origin) {
@@ -108,8 +108,8 @@ app.post('/api/register', async (req, res) => {
         res.status(200).json(sendResponse("200", "Signup Successful!"));
 
     } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json(sendResponse("500", "Error processing, try again"));
+        // console.error('Registration error:', error);
+        res.status(500).json(sendResponse("500", "Error processing, try again: "+error));
     }
 });
 
@@ -767,7 +767,152 @@ app.post('/api/getrefstat', async(req, res) => {
 
         res.status(200).json(sendResponse("200", allData));
     }
+    else {
+        res.status(400).json(sendResponse("200", empty));
+    }
     await mongoose.disconnect();
+});
+
+// get nwepustat
+app.post('/api/nwepustat', async(req, res) => {
+    const { username, biz } = req.body;
+    const ugwoStat = "pend";
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    let empty = {
+        udiEgo: "",
+        egoOne: 0,
+        pendEgo: 0
+    };
+
+    if (username?.length == 0 || biz?.length == 0) {
+        res.status(400).json(sendResponse("400", empty));
+    }
+    else {
+        const ntinyeData = await Ntinye.find({
+            username, biz, ugwoStat
+        });
+
+        if (ntinyeData) {
+            let allData = [];
+            ntinyeData.map((data) => {
+                let currentEgo = data.currentEgoOne;
+                let uzoUgwo = data.uzoUgwo;
+                let nweputa = data.nweputa;
+                let matu = new Date(data.matu).getTime();
+                let present = Data.now();
+
+                if (present > matu) {
+                    //matured already
+                    let everyData = {
+                        udiEgo: uzoUgwo,
+                        egoOne: currentEgoOne,
+                        pendEgo: nweputa
+                    }
+                    allData.push(everyData);
+                }
+            });
+
+            res.status(200).json(sendResponse("200", allData));
+            await mongoose.disconnect();
+
+        }
+        else {
+            res.status(400).json(sendResponse("400", empty));
+        }
+    }
+});
+
+// get getadmindata
+app.post('/api/getadmindata', async(req, res) => {
+    const { domainKey } = req.body;
+    const ugwoStat = "pend";
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    let empty = {
+        totalMmadu: 0,
+        totalNtinye: 0,
+        totalNwepu: 0,
+        totalSus: 0,
+        totalAct: 0,
+        activeMmadu: [],
+        susMmadu: [],
+        lastIseNtinye: [],
+        lastIseNwepu: [],
+        mmaduList: [],
+        ntinyeList: [],
+        nwepuList: []
+    };
+
+    if (domainKey?.length == 0) {
+        res.status(400).json(sendResponse("400", empty));
+    }
+    else {
+        // mmadu nile
+        const mmaduData = await Mmadu.find({
+            domainKey
+        });
+
+        let totalMmadu = mmaduData?.length;
+
+        // ntinye nine
+        const ntinyeData = await Ntinye.find({
+            domainKey
+        });
+
+        let allNtinyeData = [];
+        ntinyeData.map((data) => {
+            let eachNtinye = data.egoOne;
+            allNtinyeData.push(eachNtinye);
+        });
+
+        let totalNtinye = allNtinyeData.reduce((sum, current) => sum + current, 0)
+
+        // nwepu nine
+        const nwepuData = await Nweputa.find({
+            domainKey
+        });
+
+        let allNweputaData = [];
+        nwepuData.map((data) => {
+            let eachNwepu = data.egoOne;
+            allNweputaData.push(eachNwepu);
+        });
+
+        let totalNwepu = allNweputaData.reduce((sum, current) => sum + current, 0);
+
+        // total sus and total act
+        let allSusMmadu = [];
+        let allActMmadu = [];
+
+        mmaduData.map((data) => {
+            let mmaduStat = data.mmaduStatus;
+
+            if (mmaduStat === "act") {
+                allActData.push(data);
+            }
+            else if (mmaduStat === "sus") {
+                allSusMmadu.push(data);
+            }
+        });
+
+        let totalAct = allActMmadu.reduce((sum, current) => sum + current, 0);
+        let totalSus = allSusMmadu.reduce((sum, current) => sum + current, 0);
+
+        // last ntinye ise
+        const lastNtinyeIse = ntinyeData.slice(-5);
+
+        // last nwepu ise
+        const lastNwepuIse = nwepuData.slice(-5);
+
+
+            res.status(400).json(sendResponse("400", empty));
+        
+    }
 });
 
 // Verify route
