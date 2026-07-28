@@ -588,7 +588,7 @@ app.post('/api/nwetaact', async(req, res) => {
             const allNweputaArray = [];
 
             if (nwepuData) {
-                nweputa.map((data) => {
+                nwepuData.map((data) => {
                     let egoOne = data.egoOne;
                     let stat = data.nwepuStat;
 
