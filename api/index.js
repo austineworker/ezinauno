@@ -156,12 +156,12 @@ app.post('/api/login', async (req, res) => {
             }
         }
 
-        res.status(200).json(sendResponse("200", "Login Successful", msg));
+        res.status(200).json(sendResponse("200", "Login Successful"));
         await mongoose.disconnect();
 
     } catch (error) {
         // console.error('Login error:', error);
-        res.status(500).json(sendResponse("500", "Error processing, try again", ""));
+        res.status(500).json(sendResponse("500", "Error processing, try again: "+error));
     }
 });
 
