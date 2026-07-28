@@ -821,7 +821,7 @@ app.post('/api/nwepustat', async(req, res) => {
                 // }
             });
 
-            res.status(200).json(sendResponse("200", allData));
+            res.status(200).json(sendResponse("200", ntinyeData));
             await mongoose.disconnect();
 
         }
