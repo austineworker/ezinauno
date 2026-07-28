@@ -186,17 +186,17 @@ app.post('/api/ntinye', async (req, res) => {
 
         let minAlo = planData.minAlo;
         let maxAlo = planData.maxAlo;
-        let daysToAdd = Number(planData.matu) || 0;
+        let daysToAdd = Number(planData.matu) || 0;//eg 7
         let dProf = planData.dProf;
 
         // Create current date and add maturity hours
         const currentDate = new Date();
-        currentDate.setDate(currentDate.getHours() + daysToAdd);
+        currentDate.setDate(currentDate.getDate() + daysToAdd);
 
         // Format as Y-m-d H:i:s
         const pad = (num) => String(num).padStart(2, '0');
         const matDate = `${currentDate.getFullYear()}-${pad(currentDate.getMonth() + 1)}-${pad(currentDate.getDate())} ${pad(currentDate.getHours())}:${pad(currentDate.getMinutes())}:${pad(currentDate.getSeconds())}`;
-        
+
         if (egoOne < minAlo) {
             return res.status(400).json(sendResponse("400", "Value too low", ""));
         }
