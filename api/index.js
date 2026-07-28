@@ -605,7 +605,7 @@ app.post('/api/nwetaact', async(req, res) => {
                 const totalPen = pendNweputaArray.reduce((sum, current) => sum + current, 0);
                 const totalApp = appNweputaArray.reduce((sum, current) => sum + current, 0);
                 const totalNweputa = allNweputaArray.reduce((sum, current) => sum + current, 0);
-                const numNweputa = nweputaData?.length;
+                const numNweputa = nwepuData?.length;
                 const lastNweputa = allNweputaArray[allNweputaArray.length - 1];
             }
             else {
