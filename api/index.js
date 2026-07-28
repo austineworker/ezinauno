@@ -35,8 +35,8 @@ app.use(cors({
 }));
 
 // Helper function for response
-const sendResponse = (code, note, token = null) => {
-    let response = { code, note };
+const sendResponse = (code, msg, token = null) => {
+    let response = { code, msg };
     if (token) response.token = token;
     return response;
 };
