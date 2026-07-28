@@ -642,6 +642,100 @@ app.post('/api/nwetaact', async(req, res) => {
     }
 });
 
+//update account
+app.post('/api/updateaccount', async(req, res) => {
+    const { username, fullname, oldPassword, password, biz } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    const nwetaMmadu = await Mmadu.findOne({
+        username: username,
+        biz: biz
+    });
+
+    let passFromTable = nwetaMmadu.password;
+
+    if (nwetaMmadu) {
+        if (fullname?.length !== 0 && password?.length == 0) {
+            //assuming only fullname was sent
+            const updateName = await Mmadu.updateOne(
+                {
+                    username,
+                    biz
+                },
+                {
+                    $set: {
+                        fullname: fullname
+                    }
+                }
+            );
+            res.status(200).json(sendResponse("200", "Fullname updated"));
+        }
+        else if (password?.length !== 0 && fullname?.length == 0) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            const isMatch = await bcrypt.compare(oldPassword, passFromTable);
+
+            if (isMatch) {
+                const updatePassword = await Mmadu.updateOne(
+                    {
+                        username,
+                        biz
+                    },
+                    {
+                        $set: {
+                            password: hashedPassword
+                        }
+                    }
+                );
+                res.status(200).json(sendResponse("200", "Password updated"));
+            }
+            else {
+                res.status(200).json(sendResponse("200", "Password incorrect"));
+            }
+        }
+        else if (fullname?.length !== 0 && password?.length !== 0) {
+            const isMatch = await bcrypt.compare(oldPassword, passFromTable);
+
+            if (isMatch) {
+                const updateName = await Mmadu.updateOne(
+                    {
+                        username,
+                        biz
+                    },
+                    {
+                        $set: {
+                            fullname: fullname
+                        }
+                    }
+                );
+
+                const updatePassword = await Mmadu.updateOne(
+                    {
+                        username,
+                        biz
+                    },
+                    {
+                        $set: {
+                            password: hashedPassword
+                        }
+                    }
+                );
+                res.status(200).json(sendResponse("200", "Details updated"));
+            }
+            else {
+                res.status(200).json(sendResponse("200", "Password incorrect"));
+            }
+        }
+    }
+    else {
+        res.status(400).json(sendResponse("400", "No User"));
+    }
+    await mongoose.disconnect();
+});
+
 // Verify route
 app.get('/api/verify', async (req, res) => {
     const authHeader = req.headers['authorization'];
