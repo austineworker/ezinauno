@@ -804,15 +804,21 @@ app.post('/api/nwepustat', async(req, res) => {
                 let matu = new Date(data.matu).getTime();
                 let present = Data.now();
 
-                if (present > matu) {
-                    //matured already
-                    let everyData = {
-                        udiEgo: uzoUgwo,
-                        egoOne: currentEgoOne,
-                        pendEgo: nweputa
-                    }
-                    allData.push(everyData);
+                let everyData = {
+                    matu: matu,
+                    present: present
                 }
+                allData.push(everyData);
+
+                // if (present > matu) {
+                //     //matured already
+                //     let everyData = {
+                //         udiEgo: uzoUgwo,
+                //         egoOne: currentEgoOne,
+                //         pendEgo: nweputa
+                //     }
+                //     allData.push(everyData);
+                // }
             });
 
             res.status(200).json(sendResponse("200", allData));
