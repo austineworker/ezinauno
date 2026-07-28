@@ -817,7 +817,7 @@ app.post('/api/nwepustat', async(req, res) => {
                 }
             });
 
-            res.status(200).json(sendResponse("200", "Wahala"));
+            res.status(200).json(sendResponse("200", allData));
             await mongoose.disconnect();
 
         }
