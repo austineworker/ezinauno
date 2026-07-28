@@ -587,6 +587,8 @@ app.post('/api/nwetaact', async(req, res) => {
             const appNweputaArray = [];
             const allNweputaArray = [];
 
+            let { totalPen, totalApp, totalNweputa, numNweputa, lastNweputa} = 0;
+
             if (nwepuData) {
                 nwepuData.map((data) => {
                     let egoOne = data.egoOne;
@@ -602,18 +604,18 @@ app.post('/api/nwetaact', async(req, res) => {
                     }
                 });
 
-                const totalPen = pendNweputaArray.reduce((sum, current) => sum + current, 0);
-                const totalApp = appNweputaArray.reduce((sum, current) => sum + current, 0);
-                const totalNweputa = allNweputaArray.reduce((sum, current) => sum + current, 0);
-                const numNweputa = nwepuData?.length;
-                const lastNweputa = allNweputaArray[allNweputaArray.length - 1];
+                totalPen = pendNweputaArray.reduce((sum, current) => sum + current, 0);
+                totalApp = appNweputaArray.reduce((sum, current) => sum + current, 0);
+                totalNweputa = allNweputaArray.reduce((sum, current) => sum + current, 0);
+                numNweputa = nwepuData?.length;
+                lastNweputa = allNweputaArray[allNweputaArray.length - 1];
             }
             else {
-                const totalPen = 0;
-                const totalApp = 0;
-                const totalNweputa = 0;
-                const nweputaOne = 0;
-                const lastNweputa = 0;
+                totalPen = 0;
+                totalApp = 0;
+                totalNweputa = 0;
+                numNweputa = 0;
+                lastNweputa = 0;
             }
 
             const allActData = {
