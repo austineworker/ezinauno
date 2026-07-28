@@ -575,7 +575,7 @@ app.post('/api/nwetaact', async(req, res) => {
                 }
 
                 actArray.push(actData);
-                totalNtinyeArray.push($eachNtinye);
+                totalNtinyeArray.push(eachNtinye);
                 currentNfoduArray.push(eachCurrentNkeFodu);
             });
 
