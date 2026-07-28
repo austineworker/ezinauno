@@ -526,7 +526,8 @@ app.post('/api/nwetaact', async(req, res) => {
     try {
         const { username, biz } = req.body;
 
-        await mongoose.connect();
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
         let empty = {
             totalNtinye: "",
