@@ -12,7 +12,7 @@ const nweputaSchema = new Schema({
         default: 'b'
     },
     egoOne: {
-        type: String,
+        type: Number,
         required: true,
     },
     plan: {

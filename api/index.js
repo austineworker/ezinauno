@@ -462,7 +462,7 @@ app.post('/api/nwetaplan', async(req, res) => {
 app.post('/api/meenweputa', async(req, res) => {
     try {
         const { username, egoOne, akpaAdd, plan, uzoUgwo, biz, domainKey } = req.body;
-        let nweputaStat = "pending";
+        let nwepuStat = "pen";
 
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
@@ -476,12 +476,172 @@ app.post('/api/meenweputa', async(req, res) => {
 
         if (ntinyeData) {
             let matu =  ntinyeData.matu;
+            const matuTime = new Date(matu).getTime();//convert to millisec
+            const currentTime = Date.now();
+
+            if (matuTime > currentTime) {
+                res.status(200).json(sendResponse("200", "Not Matu: "+matu));   
+            }
+            else {
+                const nweputaData = {
+                    username,
+                    biz,
+                    egoOne,
+                    plan,
+                    uzoUgwo,
+                    akpaAdd,
+                    nwepuStat,
+                    domainKey
+                }
+                const Nwepu = new Nweputa(nweputaData);
+                await Nwepu.save();
+
+                let currentEgoOne = Number(ntinyeData.currentEgoOne) - Number(egoOne);
+
+                //now we update ntinye table
+                //we update ntinye
+                const updateNtinye = await Ntinye.update(
+                    { 
+                        username: username, 
+                        plan: plan,
+                        biz: biz,
+                        uzoUgwo: uzoUgwo
+                    },
+                    { 
+                        $set: { 
+                                nweputa: egoOne,
+                                currentEgoOne: currentEgoOne
+                            } 
+                    }
+                );
+
+                res.status(200).json(sendResponse("200", "Nwepu done"));
+                await mongoose.disconnect();
+            }
         }
 
         res.status(200).json(sendResponse("200", nweputaData));           
         await mongoose.disconnect();
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));   
+    }
+});
+
+// nweta act
+app.post('/api/nwetaact', async(req, res) => {
+    try {
+        const { username, biz } = req.body;
+
+        await mongoose.connect();
+
+        let empty = {
+            totalNtinye: "",
+            currentNkeFodu: "",
+            numIv: "",
+            lastNtinye: "",
+            others: {
+                plan: "",
+                ntinye: "",
+                nkeFodu: "",
+                ugwoStat: ""
+            }
+        }
+
+        //getting all ntinye data
+        const ntinyeData = await Ntinye.find({
+            username,
+            biz
+        });
+
+        //getting all nwepu data
+        const nwepuData = await Nweputa.find({
+            username,
+            biz
+        });
+
+        // ntinyeData is like the act data
+        if (ntinyeData) {
+            const actArray = [];
+            const numIv = ntinyeData?.length;
+            const totalNtinyeArray = [];
+            const currentNfoduArray = [];
+
+            ntinyeData.map((data) => {
+                let eachPlan = data.plan;
+                let eachNtinye = data.egoOne;
+                let eachCurrentNkeFodu = data.currentEgoOne;
+                let ugwoStat = data.ugwoStat
+
+                let actData = {
+                    plan: eachPlan,
+                    ntinyeThem: eachNtinye,
+                    nkeFodu: eachCurrentNkeFodu,
+                    ugwoStat: ugwoStat
+                }
+
+                actArray.push(actData);
+                totalNtinyeArray.push($eachNtinye);
+                currentNfoduArray.push(eachCurrentNkeFodu);
+            });
+
+            const totalNtinye = totalNtinyeArray.reduce((sum, current) => sum + current, 0);
+            const nkeFodu = currentNfoduArray.reduce((sum, current) => sum + current, 0);
+            const lastNtinye = totalNtinyeArray[totalNtinyeArray.length - 1];
+
+            const pendNweputaArray = [];
+            const appNweputaArray = [];
+            const allNweputaArray = [];
+
+            if (nwepuData) {
+                nweputa.map((data) => {
+                    let egoOne = data.egoOne;
+                    let stat = data.nwepuStat;
+
+                    allNweputaArray.push(egoOne);
+
+                    if (stat === "pen") {
+                        pendNweputaArray.push(egoOne);
+                    }
+                    else if (stat === "app") {
+                        appNweputaArray.push(egoOne);
+                    }
+                });
+
+                const totalPen = pendNweputaArray.reduce((sum, current) => sum + current, 0);
+                const totalApp = appNweputaArray.reduce((sum, current) => sum + current, 0);
+                const totalNweputa = allNweputaArray.reduce((sum, current) => sum + current, 0);
+                const numNweputa = nweputaData?.length;
+                const lastNweputa = allNweputaArray[allNweputaArray.length - 1];
+            }
+            else {
+                const totalPen = 0;
+                const totalApp = 0;
+                const totalNweputa = 0;
+                const nweputaOne = 0;
+                const lastNweputa = 0;
+            }
+
+            const allActData = {
+                totalNtinye: totalNtinye,
+                currentNfodu: nkeFodu,
+                numIv: numIv,
+                lastNtinye: lastNtinye,
+                otherNtinye: actArray,
+                pendNweputa: totalPen,
+                appNweputa: totalApp,
+                totalNweputa: totalNweputa,
+                numNweputa: numNweputa,
+                lastNweputa: lastNweputa
+            }
+
+            res.status(200).json(sendResponse("200", allActData));
+            await mongoose.disconnect();
+        }
+        else {
+            res.status(400).json(sendResponse("400", empty));
+        }
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing"));   
     }
 });
 
