@@ -10,6 +10,7 @@ const Ntinye = require('../models/ntinye');
 const Alo = require('../models/alo');
 const Reftab = require('../models/reftab');
 const Nweputa = require('../models/nweputa');
+const Admin = require('../models/admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -160,7 +161,6 @@ app.post('/api/login', async (req, res) => {
         await mongoose.disconnect();
 
     } catch (error) {
-        // console.error('Login error:', error);
         res.status(500).json(sendResponse("500", "Error processing, try again"));
     }
 });
@@ -909,62 +909,206 @@ app.post('/api/getadmindata', async(req, res) => {
         // last nwepu ise
         const lastNwepuIse = nwepuData.slice(-5);
 
-
-            res.status(400).json(sendResponse("400", empty));
+        let mainData = {
+            totalMmadu: totalMmadu,
+            totalNtinye: totalNtinye,
+            totalNwepu: totalNwepu,
+            totalSus: totalSus,
+            totalAct: totalAct,
+            actMmadu: allActMmadu,
+            susMmadu: allSusMmadu,
+            lastNtinyeIse: lastNtinyeIse,
+            lastNwepuIse: lastNwepuIse,
+            mmaduList: mmaduData,
+            ntinyeList: ntinyeData,
+            nwepuList: nwepuData
+        }
         
-    }
-});
-
-// Verify route
-app.get('/api/verify', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).send("false");
-    }
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
-        if (err) {
-            return res.status(401).send("false");
-        }
-
-        try {
-            await mongoose.connect(process.env.MONGODB_URI);
-            const user = await Mmadu.findOne({ username: decoded.name });
-            await mongoose.disconnect();
-            res.status(200).send(user ? "true" : "false");
-        } catch (error) {
-            res.status(500).send("false");
-        }
-    });
-});
-
-// Profile route
-app.get('/api/profile', async (req, res) => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        const users = await Mmadu.find();
-
-        if (!users || users.length === 0) {
-            await mongoose.disconnect();
-            return res.status(404).json(sendResponse("400", "No Access!!"));
-        }
-
-        const MmaduMap = users.map(user => ({
-            id: user._id,
-            username: user.username,
-            fullname: user.fullname,
-            img: user.img || ''
-        }));
-
+        res.status(400).json(sendResponse("400", empty));
         await mongoose.disconnect();
-        res.status(200).json(MmaduMap);
-
-    } catch (error) {
-        console.error('Profile fetch error:', error);
-        res.status(500).json(sendResponse("500", "Error fetching profiles"));
     }
+});
+
+//runaction
+app.post('/api/meeaction', async(req, res) => {
+    const { action, whichAction, domainKey, tid } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    if (action === "act") {
+        const updateAct = await Mmadu.updateOne(
+            {
+                _id: tid,
+                domainKey
+            },
+            {
+                $set: {
+                    mmaduStatus: whichAction
+                }
+            }
+        );
+    }
+    else if (action === "ntinye") {
+        const updateAct = await Ntinye.updateOne(
+            {
+                _id: tid,
+                domainKey
+            },
+            {
+                $set: {
+                    ugwoStat: whichAction
+                }
+            }
+        );
+    }
+    else if (action === "nweputa") {
+        const updateAct = await Ntinye.updateOne(
+            {
+                _id: tid,
+                domainKey
+            },
+            {
+                $set: {
+                    nwepuStat: whichAction
+                }
+            }
+        )
+    }
+
+    res.status(200).json(sendResponse("200", "Done"));
+    await mongoose.disconnect();
+});
+
+// update akpa
+app.post('/api/akpaupdate', async(req, res) => {
+    const { username, bAd, eAd, bnsAd, bnAd, utAd, ueAd, biz } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    const dozieAkpa = await Mmadu.updateOne(
+        {
+            username, biz
+        },
+        {
+            $set: {
+                bAd, eAd, bnsAd, bnAd, utAd, ueAd
+            }
+        }
+    );
+    res.status(200).json(sendResponse('200', "Done"));
+    await mongoose.disconnect();
+});
+
+// dozie nfodu
+app.post('/api/dozieufodu', async(req, res) => {
+    const { tid, egoOne, action } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    if (_.isEmpty(tid) || _.isEmpty(egoOne) || _.isEmpty(action)) {
+        res.status(400).json(sendResponse('400', "Error processing!"))
+    }
+    else {
+        const ntinyeData = await Ntinye.findOne({
+            _id: tid
+        });
+
+        if (ntinyeData) {
+            let egoOneOnline = ntinyeData.currentEgoOne;
+            let newEgoOne = 0;
+
+            if (action === "tinye") {
+                newEgoOne = Number(egoOneOnline) + Number(egoOne); 
+            }
+            else if (action === "wepu") {
+                newEgoOne = Number(egoOneOnline) - Number(egoOne);
+            }
+
+            const dozieNtinye = await Ntinye.updateOne(
+                {
+                    _id: tid
+                },
+                {
+                    $set: {
+                        currentEgoOne: newEgoOne
+                    }
+                }
+            )
+
+            res.status(200).json(sendResponse('200', "Done"));
+        }
+        else {
+            res.status(400).json(sendResponse('400', "Error processing!"))
+        }
+    }
+    await mongoose.disconnect();
+});
+
+// nweta nfodu
+app.post('/api/nwetanfodu', async(req, res) => {
+    const { domainKey } = req.body;
+    const ugwoStat = 'app';
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    if (_.isEmpty(domainKey)) {
+        res.status(400).json(sendResponse("400", []));
+    }
+    else {
+        const ntinyeData = await Ntinye.find({
+            domainKey,
+            ugwoStat
+        });
+
+        if (ntinyeData) {
+            let allData = [];
+            ntinyeData.map((data) => {
+                let id = data._id;
+                let plan = data.plan;
+                let egoOne = data.currentEgoOne;
+                let username = data.username;
+
+                let dataVal = {
+                    id: id,
+                    plan: plan,
+                    egoOne: egoOne,
+                    username: username
+                };
+                allData.push(dataVal);
+            });
+
+            res.status(200).json(sendResponse('200', allData));
+        }
+        else {
+            res.status(400).json(sendResponse("400", []));
+        }
+    }
+    await mongoose.disconnect();
+});
+
+//wepu mmadu
+app.post('/api/wepummadu', async(req, res) => {
+    const { username, domainKey } = req.body;
+    
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    if (_.isEmpty(username) || _.isEmpty(domainKey)) {
+        res.status(400).json(sendResponse("400", "Error Processing"));
+    }
+    else {
+        const wepuUbochiProf = await Ntinyeprof.deleteMany({ username: username });
+        const wepuNtinye = await Ntinye.deleteMany({ username: username, domainKey: domainKey });
+        const wepuMmaduData = await Mmadu.deleteMany({ username: username, domainKey: domainKey });
+        const wepuNweputa = await Nweputa.deleteMany({ username: username, domainKey: domainKey });
+        
+        res.status(200).json(sendResponse("200", "Done"));
+    }
+    await mongoose.disconnect();
 });
 
 // 404 handler for undefined routes

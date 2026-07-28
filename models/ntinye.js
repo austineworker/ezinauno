@@ -39,8 +39,8 @@ const ntinyeSchema = new Schema({
     },
     ugwoStat: {
         type: String,
-        enum: ['pend', 'appr', 'cancel'],
-        default: 'pend'
+        enum: ['pen', 'app', 'can'],
+        default: 'pen'
     },
     nweputa: {
         type: String,
