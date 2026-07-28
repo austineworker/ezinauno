@@ -210,18 +210,18 @@ app.post('/api/ntinye', async (req, res) => {
             return res.status(400).json(sendResponse("400", "Value too high!", ""));
         }
         
-        const planExist = await Ntinye.findOne({
+        const ntinyeExist = await Ntinye.findOne({
             username: username,
             plan: plan,
             uzoUgwo: uzoUgwo,
             biz: biz
         });
 
-        // If you need to check if plan exists or not
-        if (!planExist) {
+        // If you need to check if ntinye exists or not
+        if (!ntinyeExist) {
             // Plan not found
             //check whether referrer is empty
-            if (referrer.length == "") {
+            if (referrer.length == "" || referrer === "-") {
                 //just tinye, because the referrer didn't tinye yet
                 //now we run ntinye
                 const ntinyeData = {
