@@ -806,7 +806,7 @@ app.post('/api/nwepustat', async(req, res) => {
                 ugwoStat: ugwoStat
             });
 
-            res.status(200).json(sendResponse("200", ntinyeData?.length));
+            // res.status(200).json(sendResponse("200", ntinyeData?.length));
 
             if (ntinyeData?.length === 1) {
                 let currentEgo = ntinyeData.currentEgoOne;
