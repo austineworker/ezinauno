@@ -955,7 +955,7 @@ app.post('/api/getadmindata', async(req, res) => {
                 nwepuList: nwepuData
             }
             
-            res.status(400).json(sendResponse("400", empty));
+            res.status(200).json(sendResponse("200", mainData));
             await mongoose.disconnect();
         }
     }catch(error) {
