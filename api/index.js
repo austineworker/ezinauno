@@ -806,46 +806,48 @@ app.post('/api/nwepustat', async(req, res) => {
                 ugwoStat: ugwoStat
             });
 
-            if (ntinyeData?.length <= 1) {
-                let currentEgo = ntinyeData.currentEgoOne;
-                let uzoUgwo = ntinyeData.uzoUgwo;
-                let nweputa = ntinyeData.nweputa;
-                let matu = new Date(ntinyeData.matu).getTime();
-                let present = Date.now();
+            res.status(200).json(sendResponse("200", ntinyeData?.length));
 
-                if (present > matu) {
-                    let everyData = {
-                        udiEgo: uzoUgwo,
-                        egoOne: currentEgo,
-                        pendEgo: nweputa
-                    }
+            // if (ntinyeData?.length <= 1) {
+            //     let currentEgo = ntinyeData.currentEgoOne;
+            //     let uzoUgwo = ntinyeData.uzoUgwo;
+            //     let nweputa = ntinyeData.nweputa;
+            //     let matu = new Date(ntinyeData.matu).getTime();
+            //     let present = Date.now();
 
-                    res.status(200).json(sendResponse("200", everyData));
-                }
-            }
-            else if (ntinyeData?.length > 1) {
-                let allData = [];
-                ntinyeData.map((data) => {
-                    let currentEgo = data.currentEgoOne;
-                    let uzoUgwo = data.uzoUgwo;
-                    let nweputa = data.nweputa;
-                    let matu = new Date(data.matu).getTime();
-                    let present = Date.now();
+            //     if (present > matu) {
+            //         let everyData = {
+            //             udiEgo: uzoUgwo,
+            //             egoOne: currentEgo,
+            //             pendEgo: nweputa
+            //         }
 
-                    if (present > matu) {
-                        let everyData = {
-                            udiEgo: uzoUgwo,
-                            egoOne: currentEgo,
-                            pendEgo: nweputa
-                        }
-                        allData.push(everyData);
-                    }
-                });
-                res.status(200).json(sendResponse("200", allData));
-            }
-            else {
-                res.status(400).json(sendResponse("400", empty));
-            }
+            //         res.status(200).json(sendResponse("200", everyData));
+            //     }
+            // }
+            // else if (ntinyeData?.length > 1) {
+            //     let allData = [];
+            //     ntinyeData.map((data) => {
+            //         let currentEgo = data.currentEgoOne;
+            //         let uzoUgwo = data.uzoUgwo;
+            //         let nweputa = data.nweputa;
+            //         let matu = new Date(data.matu).getTime();
+            //         let present = Date.now();
+
+            //         if (present > matu) {
+            //             let everyData = {
+            //                 udiEgo: uzoUgwo,
+            //                 egoOne: currentEgo,
+            //                 pendEgo: nweputa
+            //             }
+            //             allData.push(everyData);
+            //         }
+            //     });
+            //     res.status(200).json(sendResponse("200", allData));
+            // }
+            // else {
+            //     res.status(400).json(sendResponse("400", empty));
+            // }
         }
         await mongoose.disconnect();
     } catch(error) {
