@@ -812,16 +812,16 @@ app.post('/api/nwepustat', async(req, res) => {
                 let currentEgo = ntinyeData.currentEgoOne;
                 let uzoUgwo = ntinyeData.uzoUgwo;
                 let nweputa = ntinyeData.nweputa;
-                let matu = new Date(ntinyeData.matu).getTime();
+                // let matu = new Date(ntinyeData.matu).getTime();
                 let present = Date.now();
 
-                if (present > matu) {
-                    let everyData = {
-                        udiEgo: uzoUgwo,
-                        egoOne: currentEgo,
-                        pendEgo: nweputa
-                    }
-                }
+                // if (present > matu) {
+                //     let everyData = {
+                //         udiEgo: uzoUgwo,
+                //         egoOne: currentEgo,
+                //         pendEgo: nweputa
+                //     }
+                // }
                 res.status(200).json(sendResponse("200", ntinyeData.matu + "-" + matu));
             }
             else if (ntinyeData?.length > 1) {
