@@ -924,7 +924,7 @@ app.post('/api/getadmindata', async(req, res) => {
                 let mmaduStat = data.mmaduStatus;
 
                 if (mmaduStat === "act") {
-                    allActData.push(data);
+                    allActMmadu.push(data);
                 }
                 else if (mmaduStat === "sus") {
                     allSusMmadu.push(data);
