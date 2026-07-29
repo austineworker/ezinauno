@@ -821,9 +821,8 @@ app.post('/api/nwepustat', async(req, res) => {
                         egoOne: currentEgo,
                         pendEgo: nweputa
                     }
-
-                    res.status(200).json(sendResponse("200", everyData));
                 }
+                res.status(200).json(sendResponse("200", present + "-" + matu));
             }
             else if (ntinyeData?.length > 1) {
                 let allData = [];
