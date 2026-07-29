@@ -931,8 +931,8 @@ app.post('/api/getadmindata', async(req, res) => {
                 }
             });
 
-            let totalAct = allActMmadu.reduce((sum, current) => sum + current, 0);
-            let totalSus = allSusMmadu.reduce((sum, current) => sum + current, 0);
+            let totalAct = allActMmadu?.length;
+            let totalSus = allSusMmadu?.length;
 
             // last ntinye ise
             const lastNtinyeIse = ntinyeData.slice(-5);
