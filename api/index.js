@@ -644,62 +644,22 @@ app.post('/api/nwetaact', async(req, res) => {
 
 //update account
 app.post('/api/updateaccount', async(req, res) => {
-    const { username, fullname, oldPassword, password, biz } = req.body;
+    try {
+        const { username, fullname, oldPassword, password, biz } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    const nwetaMmadu = await Mmadu.findOne({
-        username: username,
-        biz: biz
-    });
+        const nwetaMmadu = await Mmadu.findOne({
+            username: username,
+            biz: biz
+        });
 
-    let passFromTable = nwetaMmadu.password;
+        let passFromTable = nwetaMmadu.password;
 
-    if (nwetaMmadu) {
-        if (fullname?.length !== 0 && password?.length == 0) {
-            //assuming only fullname was sent
-            const updateName = await Mmadu.updateOne(
-                {
-                    username,
-                    biz
-                },
-                {
-                    $set: {
-                        fullname: fullname
-                    }
-                }
-            );
-            res.status(200).json(sendResponse("200", "Fullname updated"));
-        }
-        else if (password?.length !== 0 && fullname?.length == 0) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-
-            const isMatch = await bcrypt.compare(oldPassword, passFromTable);
-
-            if (isMatch) {
-                const updatePassword = await Mmadu.updateOne(
-                    {
-                        username,
-                        biz
-                    },
-                    {
-                        $set: {
-                            password: hashedPassword
-                        }
-                    }
-                );
-                res.status(200).json(sendResponse("200", "Password updated"));
-            }
-            else {
-                res.status(200).json(sendResponse("200", "Password incorrect"));
-            }
-        }
-        else if (fullname?.length !== 0 && password?.length !== 0) {
-            const isMatch = await bcrypt.compare(oldPassword, passFromTable);
-
-            if (isMatch) {
+        if (nwetaMmadu) {
+            if (fullname?.length !== 0 && password?.length == 0) {
+                //assuming only fullname was sent
                 const updateName = await Mmadu.updateOne(
                     {
                         username,
@@ -711,406 +671,482 @@ app.post('/api/updateaccount', async(req, res) => {
                         }
                     }
                 );
-
-                const updatePassword = await Mmadu.updateOne(
-                    {
-                        username,
-                        biz
-                    },
-                    {
-                        $set: {
-                            password: hashedPassword
-                        }
-                    }
-                );
-                res.status(200).json(sendResponse("200", "Details updated"));
+                res.status(200).json(sendResponse("200", "Fullname updated"));
             }
-            else {
-                res.status(200).json(sendResponse("200", "Password incorrect"));
+            else if (password?.length !== 0 && fullname?.length == 0) {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+
+                const isMatch = await bcrypt.compare(oldPassword, passFromTable);
+
+                if (isMatch) {
+                    const updatePassword = await Mmadu.updateOne(
+                        {
+                            username,
+                            biz
+                        },
+                        {
+                            $set: {
+                                password: hashedPassword
+                            }
+                        }
+                    );
+                    res.status(200).json(sendResponse("200", "Password updated"));
+                }
+                else {
+                    res.status(200).json(sendResponse("200", "Password incorrect"));
+                }
+            }
+            else if (fullname?.length !== 0 && password?.length !== 0) {
+                const isMatch = await bcrypt.compare(oldPassword, passFromTable);
+
+                if (isMatch) {
+                    const updateName = await Mmadu.updateOne(
+                        {
+                            username,
+                            biz
+                        },
+                        {
+                            $set: {
+                                fullname: fullname
+                            }
+                        }
+                    );
+
+                    const updatePassword = await Mmadu.updateOne(
+                        {
+                            username,
+                            biz
+                        },
+                        {
+                            $set: {
+                                password: hashedPassword
+                            }
+                        }
+                    );
+                    res.status(200).json(sendResponse("200", "Details updated"));
+                }
+                else {
+                    res.status(200).json(sendResponse("200", "Password incorrect"));
+                }
             }
         }
+        else {
+            res.status(400).json(sendResponse("400", "No User"));
+        }
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
-    else {
-        res.status(400).json(sendResponse("400", "No User"));
-    }
-    await mongoose.disconnect();
 });
 
 // get refstat
 app.post('/api/getrefstat', async(req, res) => {
-    const { username, biz, domainKey } = req.body;
+    try {
+        const { username, biz, domainKey } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    let empty = {
-        numRef: 0,
-        total: 0
-    };
-
-    const getRef = await Reftab.find({
-        username, biz, domainKey
-    });
-
-    if (getRef) {
-        const refData = [];
-        getRef.map((data) => {
-            let totalEgo = data.bP;
-            refData.push(totalEgo);
-        });
-        
-        let numRef = getRef?.length;
-        let allData = {
-            numRef: numRef,
-            total: refData.reduce((sum, current) => sum + current, 0)
+        let empty = {
+            numRef: 0,
+            total: 0
         };
 
-        res.status(200).json(sendResponse("200", allData));
+        const getRef = await Reftab.find({
+            username, biz, domainKey
+        });
+
+        if (getRef) {
+            const refData = [];
+            getRef.map((data) => {
+                let totalEgo = data.bP;
+                refData.push(totalEgo);
+            });
+            
+            let numRef = getRef?.length;
+            let allData = {
+                numRef: numRef,
+                total: refData.reduce((sum, current) => sum + current, 0)
+            };
+
+            res.status(200).json(sendResponse("200", allData));
+        }
+        else {
+            res.status(400).json(sendResponse("200", empty));
+        }
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
-    else {
-        res.status(400).json(sendResponse("200", empty));
-    }
-    await mongoose.disconnect();
 });
 
 // get nwepustat
 app.post('/api/nwepustat', async(req, res) => {
-    const { username, biz } = req.body;
-    const ugwoStat = "pen";
+    try{
+        const { username, biz } = req.body;
+        const ugwoStat = "pen";
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    let empty = {
-        udiEgo: "",
-        egoOne: 0,
-        pendEgo: 0
-    };
+        let empty = {
+            udiEgo: "",
+            egoOne: 0,
+            pendEgo: 0
+        };
 
-    if (username?.length == 0 || biz?.length == 0) {
-        res.status(400).json(sendResponse("400", empty));
-    }
-    else {
-        const ntinyeData = await Ntinye.find({
-            username: username, 
-            biz: biz, 
-            ugwoStat: ugwoStat
-        });
-
-        if (ntinyeData) {
-            let allData = [];
-            ntinyeData.map((data) => {
-                let currentEgo = data.currentEgoOne;
-                let uzoUgwo = data.uzoUgwo;
-                let nweputa = data.nweputa;
-                let matu = new Date(data.matu).getTime();
-                let present = Data.now();
-
-                if (present > matu) {
-                    //matured already
-                    let everyData = {
-                        udiEgo: uzoUgwo,
-                        egoOne: currentEgoOne,
-                        pendEgo: nweputa
-                    }
-                    allData.push(everyData);
-                }
-            });
-
-            res.status(200).json(sendResponse("200", allData));
-            await mongoose.disconnect();
-
-        }
-        else {
+        if (username?.length == 0 || biz?.length == 0) {
             res.status(400).json(sendResponse("400", empty));
         }
+        else {
+            const ntinyeData = await Ntinye.find({
+                username: username, 
+                biz: biz, 
+                ugwoStat: ugwoStat
+            });
+
+            if (ntinyeData) {
+                let allData = [];
+                ntinyeData.map((data) => {
+                    let currentEgo = data.currentEgoOne;
+                    let uzoUgwo = data.uzoUgwo;
+                    let nweputa = data.nweputa;
+                    let matu = new Date(data.matu).getTime();
+                    let present = Data.now();
+
+                    if (present > matu) {
+                        //matured already
+                        let everyData = {
+                            udiEgo: uzoUgwo,
+                            egoOne: currentEgoOne,
+                            pendEgo: nweputa
+                        }
+                        allData.push(everyData);
+                    }
+                });
+
+                res.status(200).json(sendResponse("200", allData));
+                await mongoose.disconnect();
+
+            }
+            else {
+                res.status(400).json(sendResponse("400", empty));
+            }
+        }
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
 });
 
 // get getadmindata
 app.post('/api/getadmindata', async(req, res) => {
-    const { domainKey } = req.body;
-    const ugwoStat = "pend";
+    try{
+        const { domainKey } = req.body;
+        const ugwoStat = "pend";
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    let empty = {
-        totalMmadu: 0,
-        totalNtinye: 0,
-        totalNwepu: 0,
-        totalSus: 0,
-        totalAct: 0,
-        activeMmadu: [],
-        susMmadu: [],
-        lastIseNtinye: [],
-        lastIseNwepu: [],
-        mmaduList: [],
-        ntinyeList: [],
-        nwepuList: []
-    };
+        let empty = {
+            totalMmadu: 0,
+            totalNtinye: 0,
+            totalNwepu: 0,
+            totalSus: 0,
+            totalAct: 0,
+            activeMmadu: [],
+            susMmadu: [],
+            lastIseNtinye: [],
+            lastIseNwepu: [],
+            mmaduList: [],
+            ntinyeList: [],
+            nwepuList: []
+        };
 
-    if (domainKey?.length == 0) {
-        res.status(400).json(sendResponse("400", empty));
-    }
-    else {
-        // mmadu nile
-        const mmaduData = await Mmadu.find({
-            domainKey
-        });
-
-        let totalMmadu = mmaduData?.length;
-
-        // ntinye nine
-        const ntinyeData = await Ntinye.find({
-            domainKey
-        });
-
-        let allNtinyeData = [];
-        ntinyeData.map((data) => {
-            let eachNtinye = data.egoOne;
-            allNtinyeData.push(eachNtinye);
-        });
-
-        let totalNtinye = allNtinyeData.reduce((sum, current) => sum + current, 0)
-
-        // nwepu nine
-        const nwepuData = await Nweputa.find({
-            domainKey
-        });
-
-        let allNweputaData = [];
-        nwepuData.map((data) => {
-            let eachNwepu = data.egoOne;
-            allNweputaData.push(eachNwepu);
-        });
-
-        let totalNwepu = allNweputaData.reduce((sum, current) => sum + current, 0);
-
-        // total sus and total act
-        let allSusMmadu = [];
-        let allActMmadu = [];
-
-        mmaduData.map((data) => {
-            let mmaduStat = data.mmaduStatus;
-
-            if (mmaduStat === "act") {
-                allActData.push(data);
-            }
-            else if (mmaduStat === "sus") {
-                allSusMmadu.push(data);
-            }
-        });
-
-        let totalAct = allActMmadu.reduce((sum, current) => sum + current, 0);
-        let totalSus = allSusMmadu.reduce((sum, current) => sum + current, 0);
-
-        // last ntinye ise
-        const lastNtinyeIse = ntinyeData.slice(-5);
-
-        // last nwepu ise
-        const lastNwepuIse = nwepuData.slice(-5);
-
-        let mainData = {
-            totalMmadu: totalMmadu,
-            totalNtinye: totalNtinye,
-            totalNwepu: totalNwepu,
-            totalSus: totalSus,
-            totalAct: totalAct,
-            actMmadu: allActMmadu,
-            susMmadu: allSusMmadu,
-            lastNtinyeIse: lastNtinyeIse,
-            lastNwepuIse: lastNwepuIse,
-            mmaduList: mmaduData,
-            ntinyeList: ntinyeData,
-            nwepuList: nwepuData
+        if (domainKey?.length == 0) {
+            res.status(400).json(sendResponse("400", empty));
         }
-        
-        res.status(400).json(sendResponse("400", empty));
-        await mongoose.disconnect();
+        else {
+            // mmadu nile
+            const mmaduData = await Mmadu.find({
+                domainKey
+            });
+
+            let totalMmadu = mmaduData?.length;
+
+            // ntinye nine
+            const ntinyeData = await Ntinye.find({
+                domainKey
+            });
+
+            let allNtinyeData = [];
+            ntinyeData.map((data) => {
+                let eachNtinye = data.egoOne;
+                allNtinyeData.push(eachNtinye);
+            });
+
+            let totalNtinye = allNtinyeData.reduce((sum, current) => sum + current, 0)
+
+            // nwepu nine
+            const nwepuData = await Nweputa.find({
+                domainKey
+            });
+
+            let allNweputaData = [];
+            nwepuData.map((data) => {
+                let eachNwepu = data.egoOne;
+                allNweputaData.push(eachNwepu);
+            });
+
+            let totalNwepu = allNweputaData.reduce((sum, current) => sum + current, 0);
+
+            // total sus and total act
+            let allSusMmadu = [];
+            let allActMmadu = [];
+
+            mmaduData.map((data) => {
+                let mmaduStat = data.mmaduStatus;
+
+                if (mmaduStat === "act") {
+                    allActData.push(data);
+                }
+                else if (mmaduStat === "sus") {
+                    allSusMmadu.push(data);
+                }
+            });
+
+            let totalAct = allActMmadu.reduce((sum, current) => sum + current, 0);
+            let totalSus = allSusMmadu.reduce((sum, current) => sum + current, 0);
+
+            // last ntinye ise
+            const lastNtinyeIse = ntinyeData.slice(-5);
+
+            // last nwepu ise
+            const lastNwepuIse = nwepuData.slice(-5);
+
+            let mainData = {
+                totalMmadu: totalMmadu,
+                totalNtinye: totalNtinye,
+                totalNwepu: totalNwepu,
+                totalSus: totalSus,
+                totalAct: totalAct,
+                actMmadu: allActMmadu,
+                susMmadu: allSusMmadu,
+                lastNtinyeIse: lastNtinyeIse,
+                lastNwepuIse: lastNwepuIse,
+                mmaduList: mmaduData,
+                ntinyeList: ntinyeData,
+                nwepuList: nwepuData
+            }
+            
+            res.status(400).json(sendResponse("400", empty));
+            await mongoose.disconnect();
+        }
+    }catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
 });
 
 //runaction
 app.post('/api/meeaction', async(req, res) => {
-    const { action, whichAction, domainKey, tid } = req.body;
+    try{
+        const { action, whichAction, domainKey, tid } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    if (action === "act") {
-        const updateAct = await Mmadu.updateOne(
-            {
-                _id: tid,
-                domainKey
-            },
-            {
-                $set: {
-                    mmaduStatus: whichAction
+        if (action === "act") {
+            const updateAct = await Mmadu.updateOne(
+                {
+                    _id: tid,
+                    domainKey
+                },
+                {
+                    $set: {
+                        mmaduStatus: whichAction
+                    }
                 }
-            }
-        );
-    }
-    else if (action === "ntinye") {
-        const updateAct = await Ntinye.updateOne(
-            {
-                _id: tid,
-                domainKey
-            },
-            {
-                $set: {
-                    ugwoStat: whichAction
+            );
+        }
+        else if (action === "ntinye") {
+            const updateAct = await Ntinye.updateOne(
+                {
+                    _id: tid,
+                    domainKey
+                },
+                {
+                    $set: {
+                        ugwoStat: whichAction
+                    }
                 }
-            }
-        );
-    }
-    else if (action === "nweputa") {
-        const updateAct = await Ntinye.updateOne(
-            {
-                _id: tid,
-                domainKey
-            },
-            {
-                $set: {
-                    nwepuStat: whichAction
+            );
+        }
+        else if (action === "nweputa") {
+            const updateAct = await Ntinye.updateOne(
+                {
+                    _id: tid,
+                    domainKey
+                },
+                {
+                    $set: {
+                        nwepuStat: whichAction
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
-    res.status(200).json(sendResponse("200", "Done"));
-    await mongoose.disconnect();
+        res.status(200).json(sendResponse("200", "Done"));
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
+    }
 });
 
 // update akpa
 app.post('/api/akpaupdate', async(req, res) => {
-    const { username, bAd, eAd, bnsAd, bnAd, utAd, ueAd, biz } = req.body;
+    try{
+        const { username, bAd, eAd, bnsAd, bnAd, utAd, ueAd, biz } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    const dozieAkpa = await Mmadu.updateOne(
-        {
-            username, biz
-        },
-        {
-            $set: {
-                bAd, eAd, bnsAd, bnAd, utAd, ueAd
+        const dozieAkpa = await Mmadu.updateOne(
+            {
+                username, biz
+            },
+            {
+                $set: {
+                    bAd, eAd, bnsAd, bnAd, utAd, ueAd
+                }
             }
-        }
-    );
-    res.status(200).json(sendResponse('200', "Done"));
-    await mongoose.disconnect();
+        );
+        res.status(200).json(sendResponse('200', "Done"));
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
+    }
 });
 
 // dozie nfodu
 app.post('/api/dozieufodu', async(req, res) => {
-    const { tid, egoOne, action } = req.body;
+    try{
+        const { tid, egoOne, action } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    if (_.isEmpty(tid) || _.isEmpty(egoOne) || _.isEmpty(action)) {
-        res.status(400).json(sendResponse('400', "Error processing!"))
-    }
-    else {
-        const ntinyeData = await Ntinye.findOne({
-            _id: tid
-        });
-
-        if (ntinyeData) {
-            let egoOneOnline = ntinyeData.currentEgoOne;
-            let newEgoOne = 0;
-
-            if (action === "tinye") {
-                newEgoOne = Number(egoOneOnline) + Number(egoOne); 
-            }
-            else if (action === "wepu") {
-                newEgoOne = Number(egoOneOnline) - Number(egoOne);
-            }
-
-            const dozieNtinye = await Ntinye.updateOne(
-                {
-                    _id: tid
-                },
-                {
-                    $set: {
-                        currentEgoOne: newEgoOne
-                    }
-                }
-            )
-
-            res.status(200).json(sendResponse('200', "Done"));
-        }
-        else {
+        if (_.isEmpty(tid) || _.isEmpty(egoOne) || _.isEmpty(action)) {
             res.status(400).json(sendResponse('400', "Error processing!"))
         }
+        else {
+            const ntinyeData = await Ntinye.findOne({
+                _id: tid
+            });
+
+            if (ntinyeData) {
+                let egoOneOnline = ntinyeData.currentEgoOne;
+                let newEgoOne = 0;
+
+                if (action === "tinye") {
+                    newEgoOne = Number(egoOneOnline) + Number(egoOne); 
+                }
+                else if (action === "wepu") {
+                    newEgoOne = Number(egoOneOnline) - Number(egoOne);
+                }
+
+                const dozieNtinye = await Ntinye.updateOne(
+                    {
+                        _id: tid
+                    },
+                    {
+                        $set: {
+                            currentEgoOne: newEgoOne
+                        }
+                    }
+                )
+
+                res.status(200).json(sendResponse('200', "Done"));
+            }
+            else {
+                res.status(400).json(sendResponse('400', "Error processing!"))
+            }
+        }
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
-    await mongoose.disconnect();
 });
 
 // nweta nfodu
 app.post('/api/nwetanfodu', async(req, res) => {
-    const { domainKey } = req.body;
-    const ugwoStat = 'app';
+    try{
+        const { domainKey } = req.body;
+        const ugwoStat = 'app';
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    if (_.isEmpty(domainKey)) {
-        res.status(400).json(sendResponse("400", []));
-    }
-    else {
-        const ntinyeData = await Ntinye.find({
-            domainKey,
-            ugwoStat
-        });
-
-        if (ntinyeData) {
-            let allData = [];
-            ntinyeData.map((data) => {
-                let id = data._id;
-                let plan = data.plan;
-                let egoOne = data.currentEgoOne;
-                let username = data.username;
-
-                let dataVal = {
-                    id: id,
-                    plan: plan,
-                    egoOne: egoOne,
-                    username: username
-                };
-                allData.push(dataVal);
-            });
-
-            res.status(200).json(sendResponse('200', allData));
-        }
-        else {
+        if (_.isEmpty(domainKey)) {
             res.status(400).json(sendResponse("400", []));
         }
+        else {
+            const ntinyeData = await Ntinye.find({
+                domainKey,
+                ugwoStat
+            });
+
+            if (ntinyeData) {
+                let allData = [];
+                ntinyeData.map((data) => {
+                    let id = data._id;
+                    let plan = data.plan;
+                    let egoOne = data.currentEgoOne;
+                    let username = data.username;
+
+                    let dataVal = {
+                        id: id,
+                        plan: plan,
+                        egoOne: egoOne,
+                        username: username
+                    };
+                    allData.push(dataVal);
+                });
+
+                res.status(200).json(sendResponse('200', allData));
+            }
+            else {
+                res.status(400).json(sendResponse("400", []));
+            }
+        }
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
-    await mongoose.disconnect();
 });
 
 //wepu mmadu
 app.post('/api/wepummadu', async(req, res) => {
-    const { username, domainKey } = req.body;
-    
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-
-    if (_.isEmpty(username) || _.isEmpty(domainKey)) {
-        res.status(400).json(sendResponse("400", "Error Processing"));
-    }
-    else {
-        const wepuUbochiProf = await Ntinyeprof.deleteMany({ username: username });
-        const wepuNtinye = await Ntinye.deleteMany({ username: username, domainKey: domainKey });
-        const wepuMmaduData = await Mmadu.deleteMany({ username: username, domainKey: domainKey });
-        const wepuNweputa = await Nweputa.deleteMany({ username: username, domainKey: domainKey });
+    try{
+        const { username, domainKey } = req.body;
         
-        res.status(200).json(sendResponse("200", "Done"));
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        if (_.isEmpty(username) || _.isEmpty(domainKey)) {
+            res.status(400).json(sendResponse("400", "Error Processing"));
+        }
+        else {
+            const wepuUbochiProf = await Ntinyeprof.deleteMany({ username: username });
+            const wepuNtinye = await Ntinye.deleteMany({ username: username, domainKey: domainKey });
+            const wepuMmaduData = await Mmadu.deleteMany({ username: username, domainKey: domainKey });
+            const wepuNweputa = await Nweputa.deleteMany({ username: username, domainKey: domainKey });
+            
+            res.status(200).json(sendResponse("200", "Done"));
+        }
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
-    await mongoose.disconnect();
 });
 
 // 404 handler for undefined routes
