@@ -1044,7 +1044,7 @@ app.post('/api/akpaupdate', async(req, res) => {
 });
 
 // dozie nfodu
-app.post('/api/dozieufodu', async(req, res) => {
+app.post('/api/dozienfodu', async(req, res) => {
     try{
         const { tid, egoOne, action } = req.body;
 
