@@ -822,7 +822,7 @@ app.post('/api/nwepustat', async(req, res) => {
                 //         pendEgo: nweputa
                 //     }
                 // }
-                res.status(200).json(sendResponse("200", ntinyeData?.matu));
+                res.status(200).json(sendResponse("200", ntinyeData?.nweputa));
             }
             else if (ntinyeData?.length > 1) {
                 let allData = [];
