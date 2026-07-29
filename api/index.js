@@ -806,33 +806,36 @@ app.post('/api/nwepustat', async(req, res) => {
                 ugwoStat: ugwoStat
             });
 
-            if (ntinyeData) {
-                let allData = [];
-                ntinyeData.map((data) => {
-                    let currentEgo = data.currentEgoOne;
-                    let uzoUgwo = data.uzoUgwo;
-                    let nweputa = data.nweputa;
-                    let matu = new Date(data.matu).getTime();
-                    let present = Data.now();
+            res.status(200).json(sendResponse("200", ntinyeData));
+            await mongoose.disconnect();
 
-                    if (present > matu) {
-                        //matured already
-                        let everyData = {
-                            udiEgo: uzoUgwo,
-                            egoOne: currentEgoOne,
-                            pendEgo: nweputa
-                        }
-                        allData.push(everyData);
-                    }
-                });
+            // if (ntinyeData) {
+            //     let allData = [];
+            //     ntinyeData.map((data) => {
+            //         let currentEgo = data.currentEgoOne;
+            //         let uzoUgwo = data.uzoUgwo;
+            //         let nweputa = data.nweputa;
+            //         let matu = new Date(data.matu).getTime();
+            //         let present = Data.now();
 
-                res.status(200).json(sendResponse("200", ntinyeData));
-                await mongoose.disconnect();
+            //         if (present > matu) {
+            //             //matured already
+            //             let everyData = {
+            //                 udiEgo: uzoUgwo,
+            //                 egoOne: currentEgoOne,
+            //                 pendEgo: nweputa
+            //             }
+            //             allData.push(everyData);
+            //         }
+            //     });
 
-            }
-            else {
-                res.status(400).json(sendResponse("400", empty));
-            }
+            //     res.status(200).json(sendResponse("200", ntinyeData));
+            //     await mongoose.disconnect();
+
+            // }
+            // else {
+            //     res.status(400).json(sendResponse("400", empty));
+            // }
         }
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));
