@@ -998,7 +998,7 @@ app.post('/api/meeaction', async(req, res) => {
             );
         }
         else if (action === "nweputa") {
-            const updateAct = await Ntinye.updateOne(
+            const updateAct = await Nweputa.updateOne(
                 {
                     _id: tid,
                     domainKey
