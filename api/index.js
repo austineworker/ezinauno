@@ -806,7 +806,7 @@ app.post('/api/nwepustat', async(req, res) => {
                 ugwoStat: ugwoStat
             });
 
-            if (ntinyeData?.length == 1) {
+            if (ntinyeData?.length <= 1) {
                 let currentEgo = ntinyeData.currentEgoOne;
                 let uzoUgwo = ntinyeData.uzoUgwo;
                 let nweputa = ntinyeData.nweputa;
