@@ -134,9 +134,8 @@ app.post('/api/registeradmin', async(req, res) => {
     const People = new Admin(Mmadu_data);
     await People.save();
 
-    await mongoose.disconnect();
-
     res.status(200).json(sendResponse("200", "Admin Signup Successful!"));
+    await mongoose.disconnect();
 });
 
 // Login route
