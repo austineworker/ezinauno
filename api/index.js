@@ -153,7 +153,7 @@ app.post('/api/login', async (req, res) => {
 
         await mongoose.connect(process.env.MONGODB_URI);
 
-        const user = [];
+        let user = [];
 
         if (userData === "admin3310") {
             user = await Admin.findOne({ username: userData });
