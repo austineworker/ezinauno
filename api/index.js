@@ -183,7 +183,7 @@ app.post('/api/login', async (req, res) => {
         const msg = [];
         const access_token = jwt.sign(MmaduData, process.env.ACCESS_TOKEN_SECRET);
 
-        if (MmaduData.username === "admin3310") {
+        if (username === "admin3310") {
             const msg = {
                 token: access_token,
                 user: {
@@ -212,7 +212,7 @@ app.post('/api/login', async (req, res) => {
         await mongoose.disconnect();
 
     } catch (error) {
-        res.status(500).json(sendResponse("500", "Error processing, try again"));
+        res.status(500).json(sendResponse("500", "Error processing, try again: "+error));
     }
 });
 
