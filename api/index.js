@@ -116,26 +116,30 @@ app.post('/api/register', async (req, res) => {
 
 // Register admin
 app.post('/api/registeradmin', async(req, res) => {
-    let { username, email, password, domainKey } = req.body;
+    try {
+        let { username, email, password, domainKey } = req.body;
 
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-    const Mmadu_data = {
-        username,
-        email,
-        password: hashedPassword,
-        domainKey
-    };
+        const Mmadu_data = {
+            username,
+            email,
+            password: hashedPassword,
+            domainKey
+        };
 
-    const People = new Admin(Mmadu_data);
-    await People.save();
+        const People = new Admin(Mmadu_data);
+        await People.save();
 
-    res.status(200).json(sendResponse("200", "Admin Signup Successful!"));
-    await mongoose.disconnect();
+        res.status(200).json(sendResponse("200", "Admin Signup Successful!"));
+        await mongoose.disconnect();
+    } catch(error) {
+        res.status(400).json(sendResponse("400", "Error processing: "+ error));
+    }
 });
 
 // Login route
