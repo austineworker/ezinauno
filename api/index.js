@@ -145,10 +145,10 @@ app.post('/api/login', async (req, res) => {
             email: user.email 
         };
 
-        const msg = {};
+        const msg = [];
         const access_token = jwt.sign(MmaduData, process.env.ACCESS_TOKEN_SECRET);
 
-        if (MmaduData === "admin3310") {
+        if (MmaduData.username === "admin3310") {
             const msg = {
                 token: access_token,
                 user: {
