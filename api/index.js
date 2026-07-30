@@ -125,7 +125,14 @@ app.post('/api/login', async (req, res) => {
 
         await mongoose.connect(process.env.MONGODB_URI);
 
-        const user = await Mmadu.findOne({ username: userData });
+        const user = [];
+
+        if (userData === "admin3310") {
+            user = await Admin.findOne({ username: userData });
+        }
+        else {
+            user = await Mmadu.findOne({ username: userData });
+        }
 
         if (!user) {
             return res.status(401).json(sendResponse("401", "Invalid email or password!", ""));
