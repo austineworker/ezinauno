@@ -212,7 +212,7 @@ app.post('/api/login', async (req, res) => {
         await mongoose.disconnect();
 
     } catch (error) {
-        res.status(500).json(sendResponse("500", "Error processing, try again"));
+        res.status(500).json(sendResponse("500", "Error processing, try again: "+error));
     }
 });
 
