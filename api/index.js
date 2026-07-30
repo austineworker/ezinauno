@@ -153,7 +153,7 @@ app.post('/api/login', async (req, res) => {
 
         await mongoose.connect(process.env.MONGODB_URI);
 
-        let user = [];
+        let user = "";
 
         if (userData === "admin3310") {
             user = await Admin.findOne({ username: userData });
@@ -183,7 +183,7 @@ app.post('/api/login', async (req, res) => {
         let msg = [];
         let access_token = jwt.sign(MmaduData, process.env.ACCESS_TOKEN_SECRET);
 
-        if (username === "admin3310") {
+        if (userData === "admin3310") {
             msg = {
                 token: access_token,
                 user: {
