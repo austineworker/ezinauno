@@ -14,11 +14,6 @@ const adminSchema = new Schema({
         type: Number,
         required: true,
     },
-    mmaduStatus: {
-        type: String,
-        enum: ['act', 'sus'],
-        default: 'act'
-    },
     domainKey: {
         type: String,
         required: true
