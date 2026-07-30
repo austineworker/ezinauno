@@ -60,77 +60,83 @@ app.post('/api/register', async (req, res) => {
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
 
-        let hashedPassword = "";
-        if (_.isEmpty(password)) {
+        const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const name_regex = /^[A-Za-z\s'-]+$/;
+
+        if (_.isEmpty(fullname) || _.isEmpty(username) || _.isEmpty(email) 
+            || _.isEmpty(password) || _.isEmpty(biz) || _.isEmpty(domainKey)) {
             return res.status(400).json(sendResponse("402", "Check for empty input!"));
+        }
+        
+        if (!email_regex.test(email)) {
+            return res.status(400).json(sendResponse("402", "Invalid email address!"));
+        }
+        
+        if (!name_regex.test(fullname)) {
+            return res.status(400).json(sendResponse("402", "Invalid name!"));
+        }
+        
+        if (password.length < 6) {
+            return res.status(400).json(sendResponse("402", "Password must be more than 6 characters!"));
+        }
+
+        const existingUser = await Mmadu.findOne({
+            $or: [{ email: email }, { username: username }]
+        });
+
+        if (existingUser) {
+            return res.status(200).json(sendResponse("200", "Account exists, login"));
         }
 
         const salt = await bcrypt.genSalt(10);
-        hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        if (username === "admin3310") {
-            const Admin_data = {
-                username,
-                email,
-                password: hashedPassword,
-                domainKey
-            };
+        const Mmadu_data = {
+            fullname,
+            username,
+            email,
+            password: hashedPassword,
+            biz,
+            domainKey,
+            referrer: referrer || ''
+        };
 
-            const AdminData = new Admin(Admin_data);
-            await AdminData.save();
-        }
-        else {
-             const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            const name_regex = /^[A-Za-z\s'-]+$/;
+        const People = new Mmadu(Mmadu_data);
+        await People.save();
 
-            if (_.isEmpty(fullname) || _.isEmpty(username) || _.isEmpty(email) || _.isEmpty(biz) || _.isEmpty(domainKey)) {
-                return res.status(400).json(sendResponse("402", "Check for empty input!"));
-            }
-            
-            if (!email_regex.test(email)) {
-                return res.status(400).json(sendResponse("402", "Invalid email address!"));
-            }
-            
-            if (!name_regex.test(fullname)) {
-                return res.status(400).json(sendResponse("402", "Invalid name!"));
-            }
-            
-            if (password.length < 6) {
-                return res.status(400).json(sendResponse("402", "Password must be more than 6 characters!"));
-            }
+        await mongoose.disconnect();
 
-            const existingUser = await Mmadu.findOne({
-                $or: [{ email: email }, { username: username }]
-            });
+        res.status(200).json(sendResponse("200", "Signup Successful!"));
 
-            if (existingUser) {
-                return res.status(200).json(sendResponse("200", "Account exists, login"));
-            }
-
-            // const salt = await bcrypt.genSalt(10);
-            // const hashedPassword = await bcrypt.hash(password, salt);
-
-            const Mmadu_data = {
-                fullname,
-                username,
-                email,
-                password: hashedPassword,
-                biz,
-                domainKey,
-                referrer: referrer || ''
-            };
-
-            const People = new Mmadu(Mmadu_data);
-            await People.save();
-
-            await mongoose.disconnect();
-
-            res.status(200).json(sendResponse("200", "Signup Successful!"));
-        }
     } catch (error) {
         // console.error('Registration error:', error);
         res.status(500).json(sendResponse("500", "Error processing, try again: "+error));
     }
+});
+
+// Register admin
+app.post('/api/registeradmin', async(req, res) => {
+    let { username, email, password, domainKey } = req.body;
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const Mmadu_data = {
+        username,
+        email,
+        password: hashedPassword,
+        domainKey
+    };
+
+    const People = new Admin(Mmadu_data);
+    await People.save();
+
+    await mongoose.disconnect();
+
+    res.status(200).json(sendResponse("200", "Admin Signup Successful!"));
 });
 
 // Login route
