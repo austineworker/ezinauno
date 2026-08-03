@@ -1098,8 +1098,6 @@ app.post('/api/akpaupdate', async(req, res) => {
 app.post('/api/dozienfodu', async(req, res) => {
     try{
         const { tid, egoOne, action } = req.body;
-        
-        res.status(200).json(sendResponse('200', req.body));
 
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
@@ -1123,16 +1121,16 @@ app.post('/api/dozienfodu', async(req, res) => {
                     newEgoOne = Number(egoOneOnline) - Number(String(egoOne).trim());
                 }
 
-                // const dozieNtinye = await Ntinye.updateOne(
-                //     {
-                //         _id: tid
-                //     },
-                //     {
-                //         $set: {
-                //             currentEgoOne: newEgoOne
-                //         }
-                //     }
-                // )
+                const dozieNtinye = await Ntinye.updateOne(
+                    {
+                        _id: tid
+                    },
+                    {
+                        $set: {
+                            currentEgoOne: newEgoOne
+                        }
+                    }
+                )
 
                 res.status(200).json(sendResponse('200', newEgoOne));
             }
