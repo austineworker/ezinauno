@@ -1098,49 +1098,49 @@ app.post('/api/akpaupdate', async(req, res) => {
 app.post('/api/dozienfodu', async(req, res) => {
     try{
         const { tid, egoOne, action } = req.body;
-
-        res.status(200).json(sendResponse("200", req.body));
         
         // Connect to MongoDB
-        // await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(process.env.MONGODB_URI);
 
-        // if (_.isEmpty(tid) || _.isEmpty(egoOne) || _.isEmpty(action)) {
-        //     res.status(400).json(sendResponse('400', "Error processing!"))
-        // }
-        // else {
-        //     const ntinyeData = await Ntinye.findOne({
-        //         _id: tid
-        //     });
+        if (_.isEmpty(tid) || _.isEmpty(egoOne) || _.isEmpty(action)) {
+            res.status(400).json(sendResponse('400', "Error processing!"))
+        }
+        else {
+            const ntinyeData = await Ntinye.findOne({
+                _id: tid
+            });
 
-        //     if (ntinyeData) {
-        //         let egoOneOnline = ntinyeData.currentEgoOne;
-        //         let newEgoOne = 0;
+            res.status(200).json(sendResponse("200", ntinyeData));
 
-        //         if (action === "tinye") {
-        //             newEgoOne = Number(egoOneOnline) + Number(egoOne); 
-        //         }
-        //         else if (action === "wepu") {
-        //             newEgoOne = Number(egoOneOnline) - Number(egoOne);
-        //         }
+            // if (ntinyeData) {
+            //     let egoOneOnline = ntinyeData.currentEgoOne;
+            //     let newEgoOne = 0;
 
-        //         const dozieNtinye = await Ntinye.updateOne(
-        //             {
-        //                 _id: tid
-        //             },
-        //             {
-        //                 $set: {
-        //                     currentEgoOne: newEgoOne
-        //                 }
-        //             }
-        //         )
+            //     if (action === "tinye") {
+            //         newEgoOne = Number(egoOneOnline) + Number(egoOne); 
+            //     }
+            //     else if (action === "wepu") {
+            //         newEgoOne = Number(egoOneOnline) - Number(egoOne);
+            //     }
 
-        //         res.status(200).json(sendResponse('200', "Done"));
-        //     }
-        //     else {
-        //         res.status(400).json(sendResponse('400', "Error processing!"))
-        //     }
-        // }
-        // await mongoose.disconnect();
+            //     const dozieNtinye = await Ntinye.updateOne(
+            //         {
+            //             _id: tid
+            //         },
+            //         {
+            //             $set: {
+            //                 currentEgoOne: newEgoOne
+            //             }
+            //         }
+            //     )
+
+            //     res.status(200).json(sendResponse('200', "Done"));
+            // }
+            // else {
+            //     res.status(400).json(sendResponse('400', "Error processing!"))
+            // }
+        }
+        await mongoose.disconnect();
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
