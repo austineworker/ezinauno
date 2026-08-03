@@ -1148,7 +1148,7 @@ app.post('/api/dozienfodu', async(req, res) => {
 app.post('/api/nwetanfodu', async(req, res) => {
     try{
         const { domainKey } = req.body;
-        const ugwoStat = 'app';
+        // const ugwoStat = 'app';
 
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
@@ -1158,33 +1158,33 @@ app.post('/api/nwetanfodu', async(req, res) => {
         }
         else {
             const ntinyeData = await Ntinye.find({
-                domainKey,
-                ugwoStat
+                domainKey
+                // ugwoStat
             });
 
-            res.status(200).json(sendResponse("200", ntinyeData));
-            // if (ntinyeData) {
-            //     let allData = [];
-            //     ntinyeData.map((data) => {
-            //         let id = data._id;
-            //         let plan = data.plan;
-            //         let egoOne = data.currentEgoOne;
-            //         let username = data.username;
+            // res.status(200).json(sendResponse("200", ntinyeData));
+            if (ntinyeData) {
+                let allData = [];
+                ntinyeData.map((data) => {
+                    let id = data._id;
+                    let plan = data.plan;
+                    let egoOne = data.currentEgoOne;
+                    let username = data.username;
 
-            //         let dataVal = {
-            //             id: id,
-            //             plan: plan,
-            //             egoOne: egoOne,
-            //             username: username
-            //         };
-            //         allData.push(dataVal);
-            //     });
+                    let dataVal = {
+                        id: id,
+                        plan: plan,
+                        egoOne: egoOne,
+                        username: username
+                    };
+                    allData.push(dataVal);
+                });
 
-            //     res.status(200).json(sendResponse('200', allData));
-            // }
-            // else {
-            //     res.status(400).json(sendResponse("400", []));
-            // }
+                res.status(200).json(sendResponse('200', allData));
+            }
+            else {
+                res.status(400).json(sendResponse("400", []));
+            }
         }
         await mongoose.disconnect();
     } catch(error) {
