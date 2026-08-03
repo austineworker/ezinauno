@@ -38,9 +38,7 @@ const ntinyeSchema = new Schema({
         required: false // Set to true if you want it required
     },
     ugwoStat: {
-        type: String,
-        enum: ['pen', 'app', 'can'],
-        default: 'pen'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
     },
     nweputa: {
         type: String,
