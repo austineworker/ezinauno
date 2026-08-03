@@ -1158,8 +1158,7 @@ app.post('/api/nwetanfodu', async(req, res) => {
         }
         else {
             const ntinyeData = await Ntinye.find({
-                domainKey
-                // ugwoStat
+                domainKey: domainKey
             });
 
             res.status(200).json(sendResponse("200", ntinyeData));
