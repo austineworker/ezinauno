@@ -1110,35 +1110,33 @@ app.post('/api/dozienfodu', async(req, res) => {
                 _id: tid
             });
 
-            res.status(200).json(sendResponse("200", ntinyeData));
+            if (ntinyeData) {
+                let egoOneOnline = ntinyeData.currentEgoOne;
+                let newEgoOne = 0;
 
-            // if (ntinyeData) {
-            //     let egoOneOnline = ntinyeData.currentEgoOne;
-            //     let newEgoOne = 0;
+                if (action === "tinye") {
+                    newEgoOne = Number(egoOneOnline) + Number(String(egoOne).trim()); 
+                }
+                else if (action === "wepu") {
+                    newEgoOne = Number(egoOneOnline) - Number(String(egoOne).trim());
+                }
 
-            //     if (action === "tinye") {
-            //         newEgoOne = Number(egoOneOnline) + Number(egoOne); 
-            //     }
-            //     else if (action === "wepu") {
-            //         newEgoOne = Number(egoOneOnline) - Number(egoOne);
-            //     }
+                // const dozieNtinye = await Ntinye.updateOne(
+                //     {
+                //         _id: tid
+                //     },
+                //     {
+                //         $set: {
+                //             currentEgoOne: newEgoOne
+                //         }
+                //     }
+                // )
 
-            //     const dozieNtinye = await Ntinye.updateOne(
-            //         {
-            //             _id: tid
-            //         },
-            //         {
-            //             $set: {
-            //                 currentEgoOne: newEgoOne
-            //             }
-            //         }
-            //     )
-
-            //     res.status(200).json(sendResponse('200', "Done"));
-            // }
-            // else {
-            //     res.status(400).json(sendResponse('400', "Error processing!"))
-            // }
+                res.status(200).json(sendResponse('200', newEgoOne));
+            }
+            else {
+                res.status(400).json(sendResponse('400', "Error processing!"))
+            }
         }
         await mongoose.disconnect();
     } catch(error) {
