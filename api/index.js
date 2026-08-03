@@ -1099,6 +1099,8 @@ app.post('/api/dozienfodu', async(req, res) => {
     try{
         const { tid, egoOne, action } = req.body;
         
+        res.status(200).json(sendResponse('200', req.body));
+
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
 
