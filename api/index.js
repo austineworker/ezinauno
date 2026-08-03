@@ -22,7 +22,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
-const allowedOrigins = ['https://iruezinauno.vercel.app','https://glassdoorholding.org', 'http://localhost:5173', 'http://localhost:5174', 'https://n08.vercel.app', 'https://fgcn08.com'];
+const allowedOrigins = ['https://iruezinauno.vercel.app','https://glassdoorholding.org', 'http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
     origin: (origin, callback) => {
         if (allowedOrigins.includes(origin) || !origin) {
