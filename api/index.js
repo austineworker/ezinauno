@@ -503,6 +503,28 @@ app.post('/api/nwetaplan', async(req, res) => {
     }
 });
 
+// nweta nweputa 
+app.post('/api/nwetanweputa', async(req, res) => {
+    const { username, biz } = req.body;
+    
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+
+    if (username && biz) {
+        const nwetaNweputa = await Nweputa.find({
+            username: username,
+            biz: biz
+        });
+
+        if (nwetaNweputa) {
+            res.status(200).json(sendResponse("200", nwetaNweputa));
+        }
+    }
+    else {
+        res.status(200).json(sendResponse("200", []));
+    }
+});
+
 // nweta nweputa
 app.post('/api/meenweputa', async(req, res) => {
     try {
