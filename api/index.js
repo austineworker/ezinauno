@@ -1079,11 +1079,17 @@ app.post('/api/akpaupdate', async(req, res) => {
 
         const dozieAkpa = await Mmadu.updateOne(
             {
-                username, biz
+                username: username, 
+                biz: biz
             },
             {
                 $set: {
-                    bAd, eAd, bnsAd, bnAd, utAd, ueAd
+                    bAd: bAd, 
+                    eAd: eAd, 
+                    bnsAd: bnsAd, 
+                    bnAd: bnAd, 
+                    utAd: utAd, 
+                    ueAd: ueAd
                 }
             }
         );
