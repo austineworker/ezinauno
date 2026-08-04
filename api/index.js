@@ -1074,8 +1074,8 @@ app.post('/api/akpaupdate', async(req, res) => {
     try{
         const { username, bAd, eAd, bnsAd, bnAd, utAd, ueAd, biz } = req.body;
 
-        res.send(200).json(sendResponse("200", req.body));
-        
+        res.status(200).json(sendResponse("200", req.body));
+
         // Connect to MongoDB
         // await mongoose.connect(process.env.MONGODB_URI);
 
