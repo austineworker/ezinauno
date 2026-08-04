@@ -1093,10 +1093,10 @@ app.post('/api/akpaupdate', async(req, res) => {
                 }
             }
         );
-        res.status(200).json(sendResponse('200', "Done"));
+        res.status(200).json(sendResponse('200', "success"));
         await mongoose.disconnect();
     } catch(error) {
-        res.status(400).json(sendResponse("400", "Error processing: "+error));
+        res.status(400).json(sendResponse("400", "error"));
     }
 });
 
