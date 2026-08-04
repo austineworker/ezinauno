@@ -1074,27 +1074,29 @@ app.post('/api/akpaupdate', async(req, res) => {
     try{
         const { username, bAd, eAd, bnsAd, bnAd, utAd, ueAd, biz } = req.body;
 
+        res.send(200).json(sendResponse("200", req.body));
+        
         // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI);
+        // await mongoose.connect(process.env.MONGODB_URI);
 
-        const dozieAkpa = await Mmadu.updateOne(
-            {
-                username: username, 
-                biz: biz
-            },
-            {
-                $set: {
-                    bAd: bAd, 
-                    eAd: eAd, 
-                    bnsAd: bnsAd, 
-                    bnAd: bnAd, 
-                    utAd: utAd, 
-                    ueAd: ueAd
-                }
-            }
-        );
-        res.status(200).json(sendResponse('200', "Done"));
-        await mongoose.disconnect();
+        // const dozieAkpa = await Mmadu.updateOne(
+        //     {
+        //         username: username, 
+        //         biz: biz
+        //     },
+        //     {
+        //         $set: {
+        //             bAd: bAd, 
+        //             eAd: eAd, 
+        //             bnsAd: bnsAd, 
+        //             bnAd: bnAd, 
+        //             utAd: utAd, 
+        //             ueAd: ueAd
+        //         }
+        //     }
+        // );
+        // res.status(200).json(sendResponse('200', "Done"));
+        // await mongoose.disconnect();
     } catch(error) {
         res.status(400).json(sendResponse("400", "Error processing: "+error));
     }
