@@ -191,7 +191,13 @@ app.post('/api/login', async (req, res) => {
                     username: user.username,
                     fullname: user.fullname,
                     email: user.email,
-                    date: user.createdAt
+                    date: user.createdAt,
+                    bAd: "-",
+                    eAd: "-",
+                    bnsAd: "-",
+                    bnAd: "-",
+                    utAd: "-",
+                    ueAd: "-"
                 }
             }
         }
@@ -203,7 +209,13 @@ app.post('/api/login', async (req, res) => {
                     username: user.username,
                     fullname: user.fullname,
                     email: user.email,
-                    date: user.createdAt
+                    date: user.createdAt,
+                    bAd: user.bAd,
+                    eAd: user.eAd,
+                    bnsAd: user.bnsAd,
+                    bnAd: user.bnAd,
+                    utAd: utAd,
+                    ueAd: ueAd
                 }
             }
         }
