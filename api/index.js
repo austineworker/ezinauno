@@ -214,8 +214,8 @@ app.post('/api/login', async (req, res) => {
                     eAd: user.eAd,
                     bnsAd: user.bnsAd,
                     bnAd: user.bnAd,
-                    utAd: utAd,
-                    ueAd: ueAd
+                    utAd: user.utAd,
+                    ueAd: user.ueAd
                 }
             }
         }
