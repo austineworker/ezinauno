@@ -232,7 +232,8 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/ntinye', async (req, res) => {
     try {
         let { plan, egoOne, uzoUgwo, username, biz, domainKey, referrer } = req.body;
-        
+        res.status(200).json(sendResponse("200", req.body));
+        return;
         // Connect to MongoDB
         await mongoose.connect(process.env.MONGODB_URI);
 
