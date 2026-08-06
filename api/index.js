@@ -273,8 +273,7 @@ app.post('/api/ntinye', async (req, res) => {
             uzoUgwo: uzoUgwo,
             biz: biz
         });
-res.status(200).json(sendResponse("200", ntinyeExist));
-return;
+
         // If you need to check if ntinye exists or not
         if (!ntinyeExist) {
             // Plan not found
@@ -385,7 +384,7 @@ return;
         else {
             const egoMbu = Number(planExist.egoOne);
             const currentEgoMbu = Number(planExist.currentEgoOne);
-            oldMatu = planExist.matu;
+            let oldMatu = planExist.matu;
 
             //now let's add time to the old matu
             const newEgoOne = egoMbu + Number(egoOne);
