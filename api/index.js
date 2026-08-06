@@ -384,28 +384,11 @@ app.post('/api/ntinye', async (req, res) => {
         else {
             const egoMbu = Number(ntinyeExist.egoOne);
             const currentEgoMbu = Number(ntinyeExist.currentEgoOne);
-            let oldMatu = ntinyeExist.matu;
 
             //now let's add time to the old matu
             const newEgoOne = egoMbu + Number(egoOne);
             const currentEgoOne = currentEgoMbu + Number(egoOne);
             
-            // Parse the old matu date
-            // let oldMatuDate = new Date(oldMatu);
-
-            // // Add the new maturity hours
-            // oldMatuDate.setHours(oldMatuDate.getHours() + matu);
-
-            // // Format the new maturity date
-            // const year = oldMatuDate.getFullYear();
-            // const month = String(oldMatuDate.getMonth() + 1).padStart(2, '0');
-            // const day = String(oldMatuDate.getDate()).padStart(2, '0');
-            // const hours = String(oldMatuDate.getHours()).padStart(2, '0');
-            // const minutes = String(oldMatuDate.getMinutes()).padStart(2, '0');
-            // const seconds = String(oldMatuDate.getSeconds()).padStart(2, '0');
-
-            // const newMatu = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-// res.status(200).json(sendResponse("200", matDate));
             //we update ntinye
             const updateNtinye = await Ntinye.updateMany(
                 { 
