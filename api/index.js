@@ -259,8 +259,7 @@ app.post('/api/ntinye', async (req, res) => {
         // Format as Y-m-d H:i:s
         const pad = (num) => String(num).padStart(2, '0');
         const matDate = `${currentDate.getFullYear()}-${pad(currentDate.getMonth() + 1)}-${pad(currentDate.getDate())} ${pad(currentDate.getHours())}:${pad(currentDate.getMinutes())}:${pad(currentDate.getSeconds())}`;
-res.status(200).json(sendResponse("200", matDate));
-return;
+
         if (egoOne < minAlo) {
             return res.status(400).json(sendResponse("400", "Value too low", ""));
         }
@@ -274,7 +273,8 @@ return;
             uzoUgwo: uzoUgwo,
             biz: biz
         });
-
+res.status(200).json(sendResponse("200", ntinyeExist));
+return;
         // If you need to check if ntinye exists or not
         if (!ntinyeExist) {
             // Plan not found
