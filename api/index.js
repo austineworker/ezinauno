@@ -405,7 +405,7 @@ app.post('/api/ntinye', async (req, res) => {
             // const seconds = String(oldMatuDate.getSeconds()).padStart(2, '0');
 
             // const newMatu = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-res.status(200).json(sendResponse("200", matDate));
+// res.status(200).json(sendResponse("200", matDate));
             //we update ntinye
             const updateNtinye = await Ntinye.updateMany(
                 { 
@@ -417,7 +417,7 @@ res.status(200).json(sendResponse("200", matDate));
                     $set: { 
                             egoOne: newEgoOne,
                             currentEgoOne: currentEgoOne,
-                            matu: newMatu
+                            matu: matDate
                          } 
                 }
             );
