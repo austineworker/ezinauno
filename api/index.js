@@ -385,8 +385,8 @@ app.post('/api/ntinye', async (req, res) => {
             const egoMbu = Number(ntinyeExist.egoOne);
             const currentEgoMbu = Number(ntinyeExist.currentEgoOne);
             let oldMatu = ntinyeExist.matu;
-// res.status(200).json(sendResponse("200", oldMatu));
-// return;
+res.status(200).json(sendResponse("200", oldMatu));
+return;
             //now let's add time to the old matu
             const newEgoOne = egoMbu + Number(egoOne);
             const currentEgoOne = currentEgoMbu + Number(egoOne);
