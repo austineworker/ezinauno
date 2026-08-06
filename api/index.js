@@ -240,7 +240,8 @@ app.post('/api/ntinye', async (req, res) => {
             plan: plan,
             domainKey: domainKey
         });
-
+res.status(200).json(sendResponse("200", planData));
+return;
         // If you need to check if data exists
         if (!planData) {
             // Plan not found
