@@ -406,17 +406,17 @@ app.post('/api/ntinye', async (req, res) => {
             );
 
             if (updateNtinye) {
-                res.status(200).json(sendResponse("200", "Etinyego Update"));
+                res.status(200).json(sendResponse("200", "Done"));
             }
             else {
-                res.status(400).json(sendResponse("400", "No ntinye"));
+                res.status(400).json(sendResponse("400", "Error"));
             }
 
             await mongoose.disconnect();
         }
     } catch (error) {
         // console.error('Registration error:', error);
-        res.status(500).json(sendResponse("500", "Error processing: "+error));
+        res.status(500).json(sendResponse("500", "Error processing"));
     }
 });
 
