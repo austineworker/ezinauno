@@ -240,8 +240,7 @@ app.post('/api/ntinye', async (req, res) => {
             plan: plan,
             domainKey: domainKey
         });
-res.status(200).json(sendResponse("200", planData));
-return;
+
         // If you need to check if data exists
         if (!planData) {
             // Plan not found
@@ -252,7 +251,7 @@ return;
         let maxAlo = planData.maxAlo;
         let daysToAdd = Number(planData.matu) || 0;//eg 7
         let dProf = planData.dProf;
-
+res.status(200).json(sendResponse("200", dProf));
         // Create current date and add maturity hours
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() + daysToAdd);
